@@ -73,6 +73,29 @@ const INITIAL_USERS: DBUser[] = [
     subjectKnowledge: {},
     subjectGoals: {},
     learningStyle: 'Theoretical'
+  },
+  {
+    id: 'u3',
+    email: 'sarah.teacher@google.com',
+    password: 'google-login-secret',
+    name: 'Sarah Teacher',
+    role: 'teacher',
+    level: 25,
+    currentXp: 25000,
+    totalXp: 25000,
+    quizzesTaken: 0,
+    perfectScores: 0,
+    streakDays: 0,
+    badges: [],
+    isVerified: true,
+    joinedClasses: [],
+    enrolledClassroomIds: [],
+    completedTopicIds: {},
+    onboardingCompleted: true,
+    subjectKnowledge: {},
+    subjectGoals: {},
+    learningStyle: 'Visual',
+    avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sarah'
   }
 ];
 
@@ -86,6 +109,16 @@ const INITIAL_CLASSROOMS: Classroom[] = [
         studentIds: ['u1'],
         createdDate: new Date().toISOString(),
         theme: 'indigo'
+    },
+    {
+        id: 'c-2',
+        name: 'Advanced Mathematics',
+        description: 'Calculus and Linear Algebra for Engineering Students.',
+        code: 'MATH99',
+        teacherId: 'u3', // Sarah Teacher
+        studentIds: [],
+        createdDate: new Date().toISOString(),
+        theme: 'emerald'
     }
 ];
 
@@ -98,6 +131,18 @@ const INITIAL_ASSIGNMENTS: Assignment[] = [
         classroomId: 'c-1',
         className: 'Physics 101',
         teacherId: 'u2',
+        createdAt: new Date().toISOString(),
+        status: 'pending',
+        submissions: []
+    },
+    {
+        id: 'a-2',
+        topic: 'Derivatives & Integrals',
+        difficulty: 'Hard',
+        dueDate: new Date(Date.now() + 86400000 * 5).toISOString(),
+        classroomId: 'c-2',
+        className: 'Advanced Mathematics',
+        teacherId: 'u3',
         createdAt: new Date().toISOString(),
         status: 'pending',
         submissions: []

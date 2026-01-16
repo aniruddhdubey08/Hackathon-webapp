@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Brain, LayoutDashboard, GraduationCap, Trophy, Settings, Loader2, Play, BookOpen, LogOut, Sparkles, Zap, Skull, Clock, CheckCircle, Swords, AlertTriangle, Lock, ArrowRight, RotateCcw, Menu, X } from 'lucide-react';
+import { Brain, LayoutDashboard, GraduationCap, Trophy, Settings, Loader2, Play, BookOpen, LogOut, Sparkles, Zap, Skull, Clock, CheckCircle, Swords, AlertTriangle, Lock, ArrowRight, RotateCcw, Menu, X, Sun, Moon } from 'lucide-react';
 
 // Components
 import { Leaderboard } from './components/Leaderboard';
@@ -102,7 +102,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }: any) => (
     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
       active 
         ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' 
-        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+        : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200'
     }`}
   >
     <Icon size={20} />
@@ -116,6 +116,9 @@ function App() {
   const [badges, setBadges] = useState<Badge[]>(BADGES_DEFINITIONS);
   const [authRole, setAuthRole] = useState<UserRole>('student');
   const [pendingVerifyEmail, setPendingVerifyEmail] = useState('');
+  
+  // Theme State
+  const [darkMode, setDarkMode] = useState(false);
   
   // UI State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -135,6 +138,15 @@ function App() {
   // Learn State
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [subjects, setSubjects] = useState<Subject[]>(SUBJECTS_DATA);
+
+  // Apply Dark Mode
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   // Check for existing session
   useEffect(() => {
@@ -281,6 +293,8 @@ function App() {
     setPendingVerifyEmail(email);
     setCurrentView(View.SIGNUP);
   };
+
+  const toggleTheme = () => setDarkMode(!darkMode);
 
   // Navigation Handler (Closes mobile menu)
   const navigateTo = (view: View) => {
@@ -460,7 +474,7 @@ function App() {
 
   // Return logic for non-authenticated states
   if (currentView === View.LANDING) {
-    return <LandingPage onLogin={() => setCurrentView(View.LOGIN)} onSignup={(role) => { setAuthRole(role); setCurrentView(View.SIGNUP); }} />;
+    return <LandingPage onLogin={() => setCurrentView(View.LOGIN)} onSignup={(role) => { setAuthRole(role); setCurrentView(View.SIGNUP); }} darkMode={darkMode} onToggleTheme={toggleTheme} />;
   }
   
   if (currentView === View.LOGIN) {
@@ -470,6 +484,8 @@ function App() {
         onSignupClick={() => setCurrentView(View.SIGNUP)}
         onBack={() => setCurrentView(View.LANDING)}
         onVerifyClick={handleVerifyRequest}
+        darkMode={darkMode}
+        onToggleTheme={toggleTheme}
       />
     );
   }
@@ -489,6 +505,8 @@ function App() {
             setPendingVerifyEmail('');
             setCurrentView(View.LANDING);
         }}
+        darkMode={darkMode}
+        onToggleTheme={toggleTheme}
       />
     );
   }
@@ -498,6 +516,8 @@ function App() {
           <OnboardingPage 
             user={userStats}
             onComplete={handleOnboardingComplete}
+            darkMode={darkMode}
+            onToggleTheme={toggleTheme}
           />
       );
   }
@@ -506,7 +526,7 @@ function App() {
   const isRoadmapQuiz = !!currentRoadmapId && !!selectedSubject;
 
   return (
-    <div className="flex min-h-screen bg-slate-50 relative">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900 relative transition-colors duration-300">
       {/* Mobile Backdrop */}
       {mobileMenuOpen && (
         <div 
@@ -517,7 +537,7 @@ function App() {
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:block
+        fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:block
         ${mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
       `}>
         <div className="p-6 h-full flex flex-col">
@@ -526,11 +546,11 @@ function App() {
               <div className="bg-indigo-600 p-2 rounded-lg">
                 <Brain className="text-white" size={24} />
               </div>
-              <span className="text-xl font-bold text-slate-800 tracking-tight">MindQuest</span>
+              <span className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">MindQuest</span>
             </div>
             <button 
               onClick={() => setMobileMenuOpen(false)}
-              className="md:hidden text-slate-400 hover:text-slate-600"
+              className="md:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               <X size={24} />
             </button>
@@ -591,27 +611,36 @@ function App() {
             />
           </nav>
 
-          <div className="pt-6 border-t border-slate-100 mt-auto">
-             <div className="flex items-center gap-3 mb-4">
+          <div className="pt-6 border-t border-slate-100 dark:border-slate-700 mt-auto space-y-4">
+             {/* Dark Mode Toggle */}
+             <button
+               onClick={() => setDarkMode(!darkMode)}
+               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors"
+             >
+                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                <span className="font-medium text-sm">{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
+             </button>
+
+             <div className="flex items-center gap-3">
                {userStats.avatar ? (
                   <img 
                     src={userStats.avatar} 
                     alt={userStats.name} 
-                    className="w-10 h-10 rounded-full border border-slate-200 object-cover bg-slate-50"
+                    className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 object-cover bg-slate-50 dark:bg-slate-700"
                   />
                ) : (
-                  <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border border-slate-200">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold border border-slate-200 dark:border-slate-600">
                     {userStats.name.charAt(0).toUpperCase()}
                   </div>
                )}
                <div className="overflow-hidden">
-                 <p className="text-sm font-bold text-slate-700 truncate w-32">{userStats.name}</p>
-                 <p className="text-xs text-slate-500 capitalize">{userStats.role}</p>
+                 <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate w-32">{userStats.name}</p>
+                 <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{userStats.role}</p>
                </div>
              </div>
              <button 
                onClick={handleLogout}
-               className="w-full flex items-center gap-2 text-slate-500 hover:text-rose-600 text-sm font-medium transition-colors"
+               className="w-full flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 text-sm font-medium transition-colors pl-1"
              >
                 <LogOut size={16} /> Sign Out
              </button>
@@ -626,7 +655,7 @@ function App() {
           <div className="flex items-center gap-3">
              <button 
                 onClick={() => setMobileMenuOpen(true)}
-                className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg -ml-2"
+                className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg -ml-2"
              >
                 <Menu size={24} />
              </button>
@@ -634,12 +663,12 @@ function App() {
                 <div className="bg-indigo-600 p-1.5 rounded-lg">
                    <Brain className="text-white" size={18} />
                 </div>
-                <span className="text-lg font-bold text-slate-800">MindQuest</span>
+                <span className="text-lg font-bold text-slate-800 dark:text-white">MindQuest</span>
              </div>
           </div>
           <button 
             onClick={() => navigateTo(View.SETTINGS)}
-            className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
+            className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
           >
             <Settings size={24} />
           </button>
@@ -714,22 +743,22 @@ function App() {
           <div className="max-w-xl mx-auto mt-10 animate-in fade-in duration-500">
             <button 
               onClick={() => setCurrentView(View.DASHBOARD)}
-              className="mb-6 text-slate-500 hover:text-indigo-600 flex items-center gap-1 font-medium text-sm transition-colors"
+              className="mb-6 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 font-medium text-sm transition-colors"
             >
               &larr; Back to Dashboard
             </button>
-            <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200 border border-slate-100">
+            <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl shadow-slate-200 dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-700">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Sparkles size={32} />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-800">Create Challenge</h2>
-                <p className="text-slate-500 mt-2">Customize your learning experience.</p>
+                <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Create Challenge</h2>
+                <p className="text-slate-500 dark:text-slate-400 mt-2">Customize your learning experience.</p>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Topic / Subject</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Topic / Subject</label>
                   <input 
                     type="text" 
                     value={quizTopic}
@@ -739,20 +768,20 @@ function App() {
                       setCurrentRoadmapId(null);
                     }}
                     placeholder="e.g. Ancient Rome, Calculus, Javascript"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none placeholder:text-slate-400"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-all outline-none placeholder:text-slate-400"
                   />
                   {quizContext && (
-                     <div className="mt-2 p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
-                       <p className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
+                     <div className="mt-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-lg">
+                       <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
                           <CheckCircle size={14} /> Official Chapter Quiz
                        </p>
-                       <p className="text-xs text-emerald-600/80 mt-1">Passing this quiz with &gt;70% accuracy will unlock the next chapter.</p>
+                       <p className="text-xs text-emerald-600/80 dark:text-emerald-500/80 mt-1">Passing this quiz with &gt;70% accuracy will unlock the next chapter.</p>
                      </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Difficulty</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Difficulty</label>
                   <div className="grid grid-cols-3 gap-3">
                     {['Easy', 'Medium', 'Hard'].map((diff) => (
                       <button
@@ -761,7 +790,7 @@ function App() {
                         className={`py-2 rounded-lg text-sm font-medium transition-all ${
                           quizDifficulty === diff 
                             ? 'bg-indigo-600 text-white shadow-md' 
-                            : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                            : 'bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-600'
                         }`}
                       >
                         {diff}
@@ -771,58 +800,58 @@ function App() {
                 </div>
 
                 <div>
-                   <label className="block text-sm font-semibold text-slate-700 mb-2">Game Mode</label>
+                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Game Mode</label>
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button
                         onClick={() => setGameMode('Classic')}
                         className={`p-3 rounded-xl border-2 text-left transition-all ${
                            gameMode === 'Classic' 
-                           ? 'border-indigo-500 bg-indigo-50' 
-                           : 'border-slate-200 hover:border-indigo-300'
+                           ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' 
+                           : 'border-slate-200 dark:border-slate-700 hover:border-indigo-300'
                         }`}
                       >
-                         <div className="text-indigo-600 mb-1"><Play size={20} /></div>
-                         <div className="font-bold text-sm text-slate-800">Classic</div>
-                         <div className="text-xs text-slate-500">Standard 5 questions</div>
+                         <div className="text-indigo-600 dark:text-indigo-400 mb-1"><Play size={20} /></div>
+                         <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Classic</div>
+                         <div className="text-xs text-slate-500 dark:text-slate-400">Standard 5 questions</div>
                       </button>
 
                       <button
                         onClick={() => setGameMode('Time Attack')}
                         className={`p-3 rounded-xl border-2 text-left transition-all ${
                            gameMode === 'Time Attack' 
-                           ? 'border-amber-500 bg-amber-50' 
-                           : 'border-slate-200 hover:border-amber-300'
+                           ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20' 
+                           : 'border-slate-200 dark:border-slate-700 hover:border-amber-300'
                         }`}
                       >
-                         <div className="text-amber-600 mb-1"><Clock size={20} /></div>
-                         <div className="font-bold text-sm text-slate-800">Time Attack</div>
-                         <div className="text-xs text-slate-500">60s Speed Run</div>
+                         <div className="text-amber-600 dark:text-amber-400 mb-1"><Clock size={20} /></div>
+                         <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Time Attack</div>
+                         <div className="text-xs text-slate-500 dark:text-slate-400">60s Speed Run</div>
                       </button>
 
                       <button
                         onClick={() => setGameMode('Sudden Death')}
                         className={`p-3 rounded-xl border-2 text-left transition-all ${
                            gameMode === 'Sudden Death' 
-                           ? 'border-rose-500 bg-rose-50' 
-                           : 'border-slate-200 hover:border-rose-300'
+                           ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20' 
+                           : 'border-slate-200 dark:border-slate-700 hover:border-rose-300'
                         }`}
                       >
-                         <div className="text-rose-600 mb-1"><Skull size={20} /></div>
-                         <div className="font-bold text-sm text-slate-800">Sudden Death</div>
-                         <div className="text-xs text-slate-500">One mistake & out</div>
+                         <div className="text-rose-600 dark:text-rose-400 mb-1"><Skull size={20} /></div>
+                         <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Sudden Death</div>
+                         <div className="text-xs text-slate-500 dark:text-slate-400">One mistake & out</div>
                       </button>
 
                       <button
                         onClick={() => setGameMode('1v1 Battle')}
                         className={`p-3 rounded-xl border-2 text-left transition-all ${
                            gameMode === '1v1 Battle' 
-                           ? 'border-violet-500 bg-violet-50' 
-                           : 'border-slate-200 hover:border-violet-300'
+                           ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20' 
+                           : 'border-slate-200 dark:border-slate-700 hover:border-violet-300'
                         }`}
                       >
-                         <div className="text-violet-600 mb-1"><Swords size={20} /></div>
-                         <div className="font-bold text-sm text-slate-800">1v1 Battle</div>
-                         <div className="text-xs text-slate-500">Beat the rival!</div>
+                         <div className="text-violet-600 dark:text-violet-400 mb-1"><Swords size={20} /></div>
+                         <div className="font-bold text-sm text-slate-800 dark:text-slate-200">1v1 Battle</div>
+                         <div className="text-xs text-slate-500 dark:text-slate-400">Beat the rival!</div>
                       </button>
                    </div>
                 </div>
@@ -830,7 +859,7 @@ function App() {
                 <button 
                   onClick={handleStartQuiz}
                   disabled={loading || !quizTopic}
-                  className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 transition-all flex justify-center items-center gap-2"
+                  className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex justify-center items-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -861,8 +890,8 @@ function App() {
 
         {currentView === View.QUIZ_RESULT && lastScore && (
           <div className="max-w-2xl mx-auto mt-10 animate-in zoom-in duration-300">
-             <div className="bg-white rounded-3xl overflow-hidden shadow-2xl shadow-indigo-100 border border-slate-100">
-               <div className="bg-slate-900 text-white p-10 text-center relative overflow-hidden">
+             <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-100 dark:shadow-slate-900 border border-slate-100 dark:border-slate-700">
+               <div className="bg-slate-900 dark:bg-slate-950 text-white p-10 text-center relative overflow-hidden">
                  <div className="relative z-10">
                    {quizResultStatus === 'fail' ? (
                      <>
@@ -921,18 +950,18 @@ function App() {
 
                <div className="p-8">
                  {/* Recommendation Card */}
-                 <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 mb-8 flex gap-4 items-start">
-                    <div className="bg-white p-2 rounded-full shadow-sm text-indigo-600 shrink-0">
+                 <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-2xl p-6 mb-8 flex gap-4 items-start">
+                    <div className="bg-white dark:bg-indigo-900 p-2 rounded-full shadow-sm text-indigo-600 dark:text-indigo-300 shrink-0">
                       <Sparkles size={24} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-indigo-900 mb-1">AI Tutor Feedback</h3>
+                      <h3 className="font-bold text-indigo-900 dark:text-indigo-300 mb-1">AI Tutor Feedback</h3>
                       {loading ? (
-                        <div className="flex items-center gap-2 text-indigo-600/70 text-sm">
+                        <div className="flex items-center gap-2 text-indigo-600/70 dark:text-indigo-400/70 text-sm">
                           <Loader2 size={14} className="animate-spin" /> Analyzing performance...
                         </div>
                       ) : (
-                        <p className="text-indigo-800 leading-relaxed text-sm">
+                        <p className="text-indigo-800 dark:text-indigo-200 leading-relaxed text-sm">
                           {recommendation}
                         </p>
                       )}
@@ -943,7 +972,7 @@ function App() {
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <button 
                       onClick={() => setCurrentView(View.DASHBOARD)}
-                      className="py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl transition-colors"
+                      className="py-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition-colors"
                     >
                       Back to Home
                     </button>
@@ -952,7 +981,7 @@ function App() {
                        <button 
                          onClick={handleStartQuiz}
                          disabled={loading}
-                         className="py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-rose-200 flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                         className="py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-rose-200 dark:shadow-none flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                        >
                          {loading ? <Loader2 className="animate-spin" size={20} /> : <RotateCcw size={20} />}
                          {loading ? 'Generating...' : 'Retry Quiz'}
@@ -960,14 +989,14 @@ function App() {
                     ) : isRoadmapQuiz ? (
                         <button 
                           onClick={() => setCurrentView(View.STUDY_SESSION)}
-                          className="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-indigo-200 flex justify-center items-center gap-2"
+                          className="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-indigo-200 dark:shadow-none flex justify-center items-center gap-2"
                         >
                            Next Topic <ArrowRight size={20} />
                         </button>
                     ) : (
                        <button 
                          onClick={() => setCurrentView(View.QUIZ_SETUP)}
-                         className="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-indigo-200"
+                         className="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-indigo-200 dark:shadow-none"
                        >
                          New Quiz
                        </button>
@@ -980,7 +1009,7 @@ function App() {
                        <button 
                          onClick={handleStartQuiz}
                          disabled={loading}
-                         className="w-full py-3 bg-white border-2 border-indigo-100 text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-colors flex justify-center items-center gap-2"
+                         className="w-full py-3 bg-white dark:bg-slate-700 border-2 border-indigo-100 dark:border-indigo-900 text-indigo-600 dark:text-indigo-300 font-bold rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/50 transition-colors flex justify-center items-center gap-2"
                        >
                           {loading ? <Loader2 className="animate-spin" size={18} /> : <Play size={18} />}
                           Practice This Topic Again

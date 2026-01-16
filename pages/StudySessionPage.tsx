@@ -158,18 +158,18 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={onBack}
-          className="p-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+          className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors"
         >
           &larr;
         </button>
         <div>
-           <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+           <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
              <span className="text-3xl">{selectedSubject.icon}</span> {selectedSubject.name}
            </h1>
-           <div className="flex items-center gap-2 text-slate-500 text-sm">
+           <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm">
               <span>Adaptive Path ({userStats.subjectKnowledge[selectedSubject.id] || 'Beginner'})</span>
               <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-              <span className="text-indigo-600 font-medium flex items-center gap-1">
+              <span className="text-indigo-600 dark:text-indigo-400 font-medium flex items-center gap-1">
                  <Sparkles size={12} /> {userStats.learningStyle || 'Practical'} Learner
               </span>
            </div>
@@ -179,10 +179,10 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
          {/* Left Panel: Hierarchical Roadmap */}
          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[calc(100vh-150px)] sticky top-6">
-               <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center gap-2 shrink-0">
-                  <Map size={18} className="text-indigo-600" />
-                  <h3 className="font-bold text-slate-800">Mission Map</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col max-h-[calc(100vh-150px)] sticky top-6">
+               <div className="p-4 bg-slate-50 dark:bg-slate-700/30 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 shrink-0">
+                  <Map size={18} className="text-indigo-600 dark:text-indigo-400" />
+                  <h3 className="font-bold text-slate-800 dark:text-white">Mission Map</h3>
                </div>
                
                {loadingRoadmap ? (
@@ -194,24 +194,24 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                     {sectors.map((sector) => {
                         const isExpanded = expandedSectors.includes(sector.id);
                         return (
-                            <div key={sector.id} className="border border-slate-100 rounded-xl overflow-hidden bg-white">
+                            <div key={sector.id} className="border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-800">
                                 <button 
                                     onClick={() => toggleSector(sector.id)}
-                                    className="w-full flex items-center justify-between p-3 bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                                    className="w-full flex items-center justify-between p-3 bg-slate-50/50 dark:bg-slate-700/20 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors"
                                 >
                                     <div className="text-left">
-                                        <h4 className="font-bold text-slate-800 text-sm">{sector.title}</h4>
-                                        <p className="text-[10px] text-slate-500">{sector.description}</p>
+                                        <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">{sector.title}</h4>
+                                        <p className="text-[10px] text-slate-500 dark:text-slate-400">{sector.description}</p>
                                     </div>
                                     {isExpanded ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronRight size={16} className="text-slate-400" />}
                                 </button>
                                 
                                 {isExpanded && (
-                                    <div className="p-2 space-y-4 bg-white">
+                                    <div className="p-2 space-y-4 bg-white dark:bg-slate-800">
                                         {sector.levels.map((level) => (
                                             <div key={level.id}>
                                                 <h5 className="px-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">{level.title}</h5>
-                                                <div className="space-y-1 relative pl-3 border-l-2 border-slate-100 ml-1">
+                                                <div className="space-y-1 relative pl-3 border-l-2 border-slate-100 dark:border-slate-700 ml-1">
                                                     {level.skills.map((skill) => {
                                                         const allSkills = sectors.flatMap(s => s.levels.flatMap(l => l.skills));
                                                         const idx = allSkills.findIndex(s => s.id === skill.id);
@@ -225,21 +225,21 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                                                                 disabled={isLocked}
                                                                 onClick={() => handleSkillSelect(skill)}
                                                                 className={`w-full text-left p-2 rounded-lg text-sm flex items-start gap-2 transition-all
-                                                                    ${isActive ? 'bg-indigo-50 text-indigo-700 font-medium' : 'hover:bg-slate-50 text-slate-600'}
+                                                                    ${isActive ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-400'}
                                                                     ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}
                                                                 `}
                                                             >
                                                                 <div className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 border 
                                                                     ${isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' : 
-                                                                      isActive ? 'border-indigo-500 bg-white' : 'border-slate-300'}
+                                                                      isActive ? 'border-indigo-500 dark:border-indigo-400 bg-white dark:bg-slate-800' : 'border-slate-300 dark:border-slate-600'}
                                                                 `}>
                                                                     {isCompleted && <CheckCircle size={10} />}
                                                                     {isLocked && <Lock size={10} className="text-slate-400" />}
-                                                                    {!isCompleted && !isLocked && isActive && <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />}
+                                                                    {!isCompleted && !isLocked && isActive && <div className="w-1.5 h-1.5 bg-indigo-500 dark:bg-indigo-400 rounded-full" />}
                                                                 </div>
                                                                 <div className="flex-1">
                                                                     <div className="leading-tight">{skill.title}</div>
-                                                                    {isActive && <div className="text-[10px] text-indigo-500/80 mt-1">{skill.description}</div>}
+                                                                    {isActive && <div className="text-[10px] text-indigo-500/80 dark:text-indigo-400/80 mt-1">{skill.description}</div>}
                                                                 </div>
                                                             </button>
                                                         )
@@ -260,13 +260,13 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
          {/* Right Panel: Content */}
          <div className="lg:col-span-8 space-y-6">
             {!isJoined ? (
-              <div className="h-full min-h-[500px] flex flex-col items-center justify-center text-center p-8 bg-white rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
-                 <div className="relative z-10 max-w-md bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-slate-100 shadow-xl">
-                    <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="h-full min-h-[500px] flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                 <div className="relative z-10 max-w-md bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-8 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-xl">
+                    <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
                        <Lock size={32} />
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Class Content Locked</h2>
-                    <p className="text-slate-500 mb-6">Join this class to access the AI study guides, quizzes, and track your progress on the leaderboard.</p>
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Class Content Locked</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mb-6">Join this class to access the AI study guides, quizzes, and track your progress on the leaderboard.</p>
                     <button 
                       onClick={onJoin}
                       className="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition-colors"
@@ -276,46 +276,46 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                  </div>
               </div>
             ) : loadingContent ? (
-               <div className="h-96 flex flex-col items-center justify-center bg-white rounded-3xl border border-slate-100 shadow-sm">
-                  <Loader2 className="animate-spin text-indigo-600 mb-4" size={40} />
-                  <h3 className="text-lg font-bold text-slate-700">Asking your AI Teacher...</h3>
+               <div className="h-96 flex flex-col items-center justify-center bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                  <Loader2 className="animate-spin text-indigo-600 dark:text-indigo-400 mb-4" size={40} />
+                  <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">Asking your AI Teacher...</h3>
                   <p className="text-slate-400 text-sm">Preparing custom content for "{selectedSkill?.title}"</p>
                </div>
             ) : studyGuide && selectedSkill ? (
               <>
                  {/* CONTENT CARD */}
-                 <div className="bg-white rounded-3xl shadow-xl shadow-slate-200 border border-slate-100 overflow-hidden animate-in fade-in duration-500">
-                    <div className="bg-gradient-to-r from-indigo-50 to-white p-8 border-b border-indigo-50">
+                 <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200 dark:shadow-slate-900/20 border border-slate-100 dark:border-slate-700 overflow-hidden animate-in fade-in duration-500">
+                    <div className="bg-gradient-to-r from-indigo-50 to-white dark:from-slate-800 dark:to-slate-750 p-8 border-b border-indigo-50 dark:border-slate-700">
                         <div className="flex justify-between items-start">
                         <div>
-                            <div className="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-full text-xs font-bold text-indigo-600 shadow-sm mb-4">
+                            <div className="inline-flex items-center gap-2 bg-white dark:bg-slate-700 px-3 py-1 rounded-full text-xs font-bold text-indigo-600 dark:text-indigo-300 shadow-sm mb-4">
                                 <Sparkles size={12} /> AI Teacher
                             </div>
-                            <h1 className="text-3xl font-bold text-slate-900 mb-2">{studyGuide.topic}</h1>
-                            <p className="text-slate-500 text-sm">Let's break this down simply.</p>
+                            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{studyGuide.topic}</h1>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm">Let's break this down simply.</p>
                         </div>
                         </div>
                     </div>
                     
                     <div className="p-8 space-y-8">
                         <section>
-                            <h3 className="text-lg font-bold text-indigo-900 mb-3 flex items-center gap-2">
-                                <BookOpen size={20} className="text-indigo-500" /> The Big Picture
+                            <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-200 mb-3 flex items-center gap-2">
+                                <BookOpen size={20} className="text-indigo-500 dark:text-indigo-400" /> The Big Picture
                             </h3>
-                            <p className="text-slate-700 leading-relaxed bg-slate-50 p-6 rounded-2xl border border-slate-100 text-lg">
+                            <p className="text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-700/30 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 text-lg">
                                 {studyGuide.overview}
                             </p>
                         </section>
 
                         <section>
-                            <h3 className="text-lg font-bold text-indigo-900 mb-4 flex items-center gap-2">
-                                <Brain size={20} className="text-indigo-500" /> Core Concepts
+                            <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-200 mb-4 flex items-center gap-2">
+                                <Brain size={20} className="text-indigo-500 dark:text-indigo-400" /> Core Concepts
                             </h3>
                             <div className="grid gap-4">
                                 {studyGuide.keyConcepts.map((concept, idx) => (
-                                <div key={idx} className="border border-slate-200 rounded-xl p-5 hover:border-indigo-200 transition-colors bg-white shadow-sm">
-                                    <h4 className="font-bold text-slate-800 mb-2 text-lg">{concept.title}</h4>
-                                    <p className="text-slate-600 leading-relaxed">{concept.content}</p>
+                                <div key={idx} className="border border-slate-200 dark:border-slate-700 rounded-xl p-5 hover:border-indigo-200 dark:hover:border-indigo-500 transition-colors bg-white dark:bg-slate-750 shadow-sm">
+                                    <h4 className="font-bold text-slate-800 dark:text-white mb-2 text-lg">{concept.title}</h4>
+                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{concept.content}</p>
                                 </div>
                                 ))}
                             </div>
@@ -324,13 +324,13 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                         {/* Common Misconceptions Section (NEW) */}
                         {studyGuide.commonMisconceptions && studyGuide.commonMisconceptions.length > 0 && (
                             <section>
-                                <h3 className="text-lg font-bold text-rose-900 mb-3 flex items-center gap-2">
-                                    <AlertCircle size={20} className="text-rose-500" /> Common Misconceptions
+                                <h3 className="text-lg font-bold text-rose-900 dark:text-rose-200 mb-3 flex items-center gap-2">
+                                    <AlertCircle size={20} className="text-rose-500 dark:text-rose-400" /> Common Misconceptions
                                 </h3>
-                                <div className="bg-rose-50 border border-rose-100 rounded-2xl p-6">
+                                <div className="bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-800 rounded-2xl p-6">
                                     <ul className="space-y-3">
                                         {studyGuide.commonMisconceptions.map((mis, idx) => (
-                                            <li key={idx} className="flex gap-3 items-start text-rose-800">
+                                            <li key={idx} className="flex gap-3 items-start text-rose-800 dark:text-rose-200">
                                                 <span className="font-bold shrink-0 text-rose-400">×</span>
                                                 {mis}
                                             </li>
@@ -343,10 +343,10 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                         {/* Practical Application Section (NEW) */}
                         {studyGuide.practicalApplication && (
                             <section>
-                                <h3 className="text-lg font-bold text-emerald-900 mb-3 flex items-center gap-2">
-                                    <Lightbulb size={20} className="text-emerald-500" /> Why This Matters
+                                <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-200 mb-3 flex items-center gap-2">
+                                    <Lightbulb size={20} className="text-emerald-500 dark:text-emerald-400" /> Why This Matters
                                 </h3>
-                                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 text-emerald-800 leading-relaxed">
+                                <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800 rounded-2xl p-6 text-emerald-800 dark:text-emerald-200 leading-relaxed">
                                     {studyGuide.practicalApplication}
                                 </div>
                             </section>
@@ -412,7 +412,7 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                         </section>
                         )}
 
-                        <div className="pt-6 flex justify-end border-t border-slate-100">
+                        <div className="pt-6 flex justify-end border-t border-slate-100 dark:border-slate-700">
                             <button 
                                 onClick={() => {
                                     // Extract context
@@ -423,7 +423,7 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                                     Summary: ${studyGuide.summary}`;
                                     onTakeQuiz(studyGuide.topic, context, selectedSkill?.id);
                                 }}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 transform hover:scale-105"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center gap-2 transform hover:scale-105"
                             >
                                 <Play size={20} fill="currentColor" /> Take Skill Quiz
                             </button>
@@ -432,11 +432,11 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                  </div>
 
                  {/* CHAT INTERFACE (NEW) */}
-                 <div className="bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden mt-6">
-                    <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
-                        <MessageSquare size={18} className="text-indigo-600" />
-                        <h3 className="font-bold text-slate-800">Ask the AI Tutor</h3>
-                        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium ml-auto">Beta</span>
+                 <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden mt-6">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-700/30 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
+                        <MessageSquare size={18} className="text-indigo-600 dark:text-indigo-400" />
+                        <h3 className="font-bold text-slate-800 dark:text-white">Ask the AI Tutor</h3>
+                        <span className="text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full font-medium ml-auto">Beta</span>
                     </div>
                     
                     <div className="p-6">
@@ -452,7 +452,7 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                                     <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
                                         msg.role === 'user' 
                                         ? 'bg-indigo-600 text-white rounded-tr-sm' 
-                                        : 'bg-slate-100 text-slate-700 rounded-tl-sm'
+                                        : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-tl-sm'
                                     }`}>
                                         {msg.text}
                                     </div>
@@ -460,10 +460,10 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                             ))}
                              {chatLoading && (
                                 <div className="flex justify-start">
-                                    <div className="bg-slate-50 text-slate-400 p-3 rounded-2xl rounded-tl-sm text-sm flex gap-1 items-center">
-                                        <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}></div>
-                                        <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                                        <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                    <div className="bg-slate-50 dark:bg-slate-700 text-slate-400 dark:text-slate-500 p-3 rounded-2xl rounded-tl-sm text-sm flex gap-1 items-center">
+                                        <div className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{animationDelay: '0s'}}></div>
+                                        <div className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                                        <div className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                                     </div>
                                 </div>
                              )}
@@ -476,7 +476,7 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
                                 placeholder="Type your doubt here..."
-                                className="w-full pl-4 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                                className="w-full pl-4 pr-12 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900 outline-none transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
                             />
                             <button 
                                 type="submit"
@@ -490,12 +490,12 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                  </div>
               </>
             ) : (
-              <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50">
-                 <div className="bg-white p-4 rounded-full shadow-sm mb-4">
-                    <Map size={32} className="text-slate-300" />
+              <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl bg-slate-50/50 dark:bg-slate-800/50">
+                 <div className="bg-white dark:bg-slate-700 p-4 rounded-full shadow-sm mb-4">
+                    <Map size={32} className="text-slate-300 dark:text-slate-500" />
                  </div>
-                 <h3 className="text-lg font-semibold text-slate-700 mb-2">Start Your Mission</h3>
-                 <p className="text-slate-500 max-w-sm">Select a MicroSkill from the mission map on the left to begin your lesson.</p>
+                 <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Start Your Mission</h3>
+                 <p className="text-slate-500 dark:text-slate-400 max-w-sm">Select a MicroSkill from the mission map on the left to begin your lesson.</p>
               </div>
             )}
          </div>

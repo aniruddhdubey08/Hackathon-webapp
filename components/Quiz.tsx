@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Question, GameMode } from '../types';
 import { CheckCircle, XCircle, ArrowRight, HelpCircle, Loader2, Timer, AlertTriangle, Heart, Swords, User, Crown } from 'lucide-react';
@@ -104,7 +105,7 @@ export const Quiz: React.FC<QuizProps> = ({ questions, topic, gameMode, onComple
     }
   };
 
-  if (!currentQuestion) return <div className="p-10 text-center"><Loader2 className="animate-spin mx-auto text-indigo-600" /></div>;
+  if (!currentQuestion) return <div className="p-10 text-center"><Loader2 className="animate-spin mx-auto text-indigo-600 dark:text-indigo-400" /></div>;
 
   return (
     <div className="max-w-3xl mx-auto w-full">
@@ -112,21 +113,21 @@ export const Quiz: React.FC<QuizProps> = ({ questions, topic, gameMode, onComple
       <div className="flex justify-between items-center mb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-             <h2 className="text-2xl font-bold text-slate-800">{topic}</h2>
+             <h2 className="text-2xl font-bold text-slate-800 dark:text-white">{topic}</h2>
              <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wider
-                ${gameMode === 'Time Attack' ? 'bg-amber-100 text-amber-700' : 
-                  gameMode === 'Sudden Death' ? 'bg-rose-100 text-rose-700' : 
-                  gameMode === '1v1 Battle' ? 'bg-violet-100 text-violet-700' : 
-                  'bg-indigo-100 text-indigo-700'}`}>
+                ${gameMode === 'Time Attack' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' : 
+                  gameMode === 'Sudden Death' ? 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400' : 
+                  gameMode === '1v1 Battle' ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400' : 
+                  'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400'}`}>
                 {gameMode}
              </span>
           </div>
-          <p className="text-slate-500 text-sm">Question {currentIndex + 1} of {questions.length}</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">Question {currentIndex + 1} of {questions.length}</p>
         </div>
         
         <div className="flex items-center gap-4">
            {gameMode === 'Time Attack' && (
-             <div className={`flex items-center gap-2 text-xl font-mono font-bold ${timeLeft < 10 ? 'text-rose-500 animate-pulse' : 'text-slate-700'}`}>
+             <div className={`flex items-center gap-2 text-xl font-mono font-bold ${timeLeft < 10 ? 'text-rose-500 animate-pulse' : 'text-slate-700 dark:text-slate-200'}`}>
                 <Timer /> {timeLeft}s
              </div>
            )}
@@ -137,7 +138,7 @@ export const Quiz: React.FC<QuizProps> = ({ questions, topic, gameMode, onComple
            )}
            <button 
              onClick={onCancel}
-             className="text-slate-400 hover:text-slate-600 text-sm font-medium"
+             className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-medium"
            >
              Exit
            </button>
@@ -147,25 +148,25 @@ export const Quiz: React.FC<QuizProps> = ({ questions, topic, gameMode, onComple
       {/* Battle Mode Scoreboard */}
       {gameMode === '1v1 Battle' && (
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-indigo-50 border border-indigo-100 p-3 rounded-xl flex items-center justify-between">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 p-3 rounded-xl flex items-center justify-between">
              <div className="flex items-center gap-2">
                 <div className="bg-indigo-600 p-1.5 rounded-lg text-white"><User size={16} /></div>
-                <span className="font-bold text-indigo-900 text-sm">You</span>
+                <span className="font-bold text-indigo-900 dark:text-indigo-200 text-sm">You</span>
              </div>
-             <span className="text-xl font-black text-indigo-600">{score}</span>
+             <span className="text-xl font-black text-indigo-600 dark:text-indigo-400">{score}</span>
           </div>
-          <div className="bg-rose-50 border border-rose-100 p-3 rounded-xl flex items-center justify-between">
+          <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800 p-3 rounded-xl flex items-center justify-between">
              <div className="flex items-center gap-2">
                 <div className="bg-rose-500 p-1.5 rounded-lg text-white"><Swords size={16} /></div>
-                <span className="font-bold text-rose-900 text-sm">{opponentName}</span>
+                <span className="font-bold text-rose-900 dark:text-rose-200 text-sm">{opponentName}</span>
              </div>
-             <span className="text-xl font-black text-rose-600">{opponentScore}</span>
+             <span className="text-xl font-black text-rose-600 dark:text-rose-400">{opponentScore}</span>
           </div>
           
           {/* Battle Log */}
           <div className="col-span-2 text-center h-6">
              {battleLog.length > 0 && (
-               <span className="text-xs font-medium text-slate-500 animate-pulse">
+               <span className="text-xs font-medium text-slate-500 dark:text-slate-400 animate-pulse">
                  {battleLog[battleLog.length - 1]}
                </span>
              )}
@@ -175,7 +176,7 @@ export const Quiz: React.FC<QuizProps> = ({ questions, topic, gameMode, onComple
 
       {/* Progress Bar (Hidden in Battle Mode to save space or styled differently) */}
       {gameMode !== '1v1 Battle' && (
-        <div className="h-2 w-full bg-slate-200 rounded-full mb-8 overflow-hidden">
+        <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full mb-8 overflow-hidden">
           <div 
             className={`h-full transition-all duration-500 ease-out rounded-full ${gameMode === 'Sudden Death' ? 'bg-rose-500' : 'bg-indigo-600'}`}
             style={{ width: `${progress}%` }}
@@ -184,11 +185,11 @@ export const Quiz: React.FC<QuizProps> = ({ questions, topic, gameMode, onComple
       )}
 
       {/* Question Card */}
-      <div className={`bg-white rounded-2xl shadow-lg border overflow-hidden mb-6 transition-colors duration-300
-         ${gameMode === 'Sudden Death' && lives === 0 ? 'border-rose-300 shadow-rose-100' : 'border-slate-200'}
+      <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-lg border overflow-hidden mb-6 transition-colors duration-300
+         ${gameMode === 'Sudden Death' && lives === 0 ? 'border-rose-300 dark:border-rose-700 shadow-rose-100 dark:shadow-none' : 'border-slate-200 dark:border-slate-700'}
       `}>
         <div className="p-6 md:p-8">
-          <h3 className="text-xl font-semibold text-slate-800 mb-6 leading-relaxed">
+          <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-6 leading-relaxed">
             {currentQuestion.questionText}
           </h3>
 
@@ -198,14 +199,14 @@ export const Quiz: React.FC<QuizProps> = ({ questions, topic, gameMode, onComple
               
               if (isAnswered) {
                 if (idx === currentQuestion.correctAnswerIndex) {
-                  btnClass += "bg-emerald-50 border-emerald-500 text-emerald-800";
+                  btnClass += "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-800 dark:text-emerald-300";
                 } else if (idx === selectedOption) {
-                  btnClass += "bg-rose-50 border-rose-500 text-rose-800";
+                  btnClass += "bg-rose-50 dark:bg-rose-900/30 border-rose-500 text-rose-800 dark:text-rose-300";
                 } else {
-                  btnClass += "bg-slate-50 border-slate-200 text-slate-400 opacity-70";
+                  btnClass += "bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 text-slate-400 dark:text-slate-500 opacity-70";
                 }
               } else {
-                btnClass += "bg-white border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-700 hover:shadow-md";
+                btnClass += "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-slate-700 dark:text-slate-200 hover:shadow-md";
               }
 
               return (
@@ -230,24 +231,24 @@ export const Quiz: React.FC<QuizProps> = ({ questions, topic, gameMode, onComple
         
         {/* Explanation Footer */}
         {showExplanation && (
-          <div className="bg-slate-50 p-6 border-t border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="bg-slate-50 dark:bg-slate-700/30 p-6 border-t border-slate-100 dark:border-slate-700 animate-in fade-in slide-in-from-bottom-4 duration-300">
             {gameMode === 'Sudden Death' && lives === 0 && (
-               <div className="flex items-center gap-2 text-rose-600 font-bold mb-4 bg-rose-50 p-3 rounded-lg border border-rose-100">
+               <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold mb-4 bg-rose-50 dark:bg-rose-900/20 p-3 rounded-lg border border-rose-100 dark:border-rose-800">
                   <AlertTriangle size={20} /> Game Over! You missed a question.
                </div>
             )}
 
             <div className="flex items-start gap-3 mb-4">
-              <HelpCircle className="text-indigo-500 mt-1 shrink-0" size={20} />
+              <HelpCircle className="text-indigo-500 dark:text-indigo-400 mt-1 shrink-0" size={20} />
               <div>
-                <h4 className="font-semibold text-indigo-900 text-sm uppercase tracking-wide mb-1">Explanation</h4>
-                <p className="text-slate-700 leading-relaxed">{currentQuestion.explanation}</p>
+                <h4 className="font-semibold text-indigo-900 dark:text-indigo-300 text-sm uppercase tracking-wide mb-1">Explanation</h4>
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{currentQuestion.explanation}</p>
               </div>
             </div>
             <div className="flex justify-end">
               <button
                 onClick={handleNext}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-lg shadow-indigo-200"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-lg shadow-indigo-200 dark:shadow-none"
               >
                 {gameMode === 'Sudden Death' && lives === 0 ? 'See Results' : 
                  currentIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}

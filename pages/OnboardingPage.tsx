@@ -1,14 +1,16 @@
 
 import React, { useState } from 'react';
-import { Sparkles, GraduationCap, Target, ArrowRight, BookOpen, Brain, Eye, Book, Wrench } from 'lucide-react';
+import { Sparkles, GraduationCap, Target, ArrowRight, BookOpen, Brain, Eye, Book, Wrench, Sun, Moon } from 'lucide-react';
 import { UserStats, LearningStyle } from '../types';
 
 interface OnboardingPageProps {
   user: UserStats;
   onComplete: (details: { level: string; major: string; goal: string, learningStyle: LearningStyle }) => void;
+  darkMode: boolean;
+  onToggleTheme: () => void;
 }
 
-export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete }) => {
+export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete, darkMode, onToggleTheme }) => {
   const [step, setStep] = useState(1);
   const [level, setLevel] = useState('');
   const [major, setMajor] = useState('');
@@ -44,24 +46,31 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-6 relative transition-colors duration-300">
+      <button 
+        onClick={onToggleTheme}
+        className="absolute top-6 right-6 p-2 rounded-full bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-md transition-all"
+      >
+        {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
+
       <div className="max-w-2xl w-full">
         {/* Progress */}
         <div className="mb-8 flex justify-center gap-2">
             {[1, 2, 3, 4].map(i => (
-                <div key={i} className={`h-2 rounded-full transition-all duration-300 ${i <= step ? 'w-12 bg-indigo-600' : 'w-4 bg-slate-200'}`} />
+                <div key={i} className={`h-2 rounded-full transition-all duration-300 ${i <= step ? 'w-12 bg-indigo-600' : 'w-4 bg-slate-200 dark:bg-slate-700'}`} />
             ))}
         </div>
 
-        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200 overflow-hidden border border-slate-100 p-8 md:p-12">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200 dark:shadow-slate-900/50 overflow-hidden border border-slate-100 dark:border-slate-700 p-8 md:p-12">
             <div className="text-center mb-10">
-                <h1 className="text-3xl font-bold text-slate-900 mb-3">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
                     {step === 1 && "What is your academic level?"}
                     {step === 2 && "What are you studying?"}
                     {step === 3 && "What is your main goal?"}
                     {step === 4 && "How do you learn best?"}
                 </h1>
-                <p className="text-slate-500 text-lg">
+                <p className="text-slate-500 dark:text-slate-400 text-lg">
                     {step === 1 && "This helps us adjust the difficulty of your quizzes."}
                     {step === 2 && "We'll tailor examples to your field of interest."}
                     {step === 3 && "We'll structure your roadmaps to help you succeed."}
@@ -77,14 +86,14 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete
                             onClick={() => setLevel(opt.id)}
                             className={`p-6 rounded-2xl border-2 text-left transition-all hover:scale-105 ${
                                 level === opt.id 
-                                ? 'border-indigo-600 bg-indigo-50 ring-2 ring-indigo-200 ring-offset-2' 
-                                : 'border-slate-100 bg-white hover:border-indigo-200'
+                                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 ring-2 ring-indigo-200 dark:ring-indigo-800 ring-offset-2 dark:ring-offset-slate-900' 
+                                : 'border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-700 hover:border-indigo-200 dark:hover:border-indigo-500'
                             }`}
                         >
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${level === opt.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${level === opt.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-600 text-slate-500 dark:text-slate-300'}`}>
                                 {opt.icon}
                             </div>
-                            <h3 className={`font-bold text-lg ${level === opt.id ? 'text-indigo-900' : 'text-slate-800'}`}>{opt.label}</h3>
+                            <h3 className={`font-bold text-lg ${level === opt.id ? 'text-indigo-900 dark:text-indigo-300' : 'text-slate-800 dark:text-white'}`}>{opt.label}</h3>
                         </button>
                     ))}
                 </div>
@@ -93,13 +102,13 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete
             {step === 2 && (
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-2">Major or Field of Study</label>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Major or Field of Study</label>
                         <input 
                             type="text" 
                             value={major}
                             onChange={(e) => setMajor(e.target.value)}
                             placeholder="e.g. Computer Science, Psychology, Marketing..."
-                            className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 text-lg focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/20 outline-none transition-all bg-white text-slate-900 placeholder:text-slate-400"
+                            className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 dark:border-slate-600 text-lg focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/20 outline-none transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400"
                             autoFocus
                         />
                     </div>
@@ -108,7 +117,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete
                             <button 
                                 key={m}
                                 onClick={() => setMajor(m)}
-                                className={`px-4 py-2 rounded-full text-sm font-bold border transition-colors ${major === m ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'}`}
+                                className={`px-4 py-2 rounded-full text-sm font-bold border transition-colors ${major === m ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'}`}
                             >
                                 {m}
                             </button>
@@ -125,16 +134,16 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete
                             onClick={() => setGoal(opt.id)}
                             className={`p-5 rounded-2xl border-2 text-left transition-all flex items-center gap-4 ${
                                 goal === opt.id 
-                                ? 'border-indigo-600 bg-indigo-50 ring-2 ring-indigo-200' 
-                                : 'border-slate-100 bg-white hover:border-indigo-200'
+                                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 ring-2 ring-indigo-200 dark:ring-indigo-800' 
+                                : 'border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-700 hover:border-indigo-200 dark:hover:border-indigo-500'
                             }`}
                         >
-                            <div className={`p-3 rounded-xl shrink-0 ${goal === opt.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                            <div className={`p-3 rounded-xl shrink-0 ${goal === opt.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-600 text-slate-500 dark:text-slate-300'}`}>
                                 <Target size={24} />
                             </div>
                             <div>
-                                <h3 className={`font-bold text-lg ${goal === opt.id ? 'text-indigo-900' : 'text-slate-800'}`}>{opt.label}</h3>
-                                <p className="text-slate-500">{opt.desc}</p>
+                                <h3 className={`font-bold text-lg ${goal === opt.id ? 'text-indigo-900 dark:text-indigo-300' : 'text-slate-800 dark:text-white'}`}>{opt.label}</h3>
+                                <p className="text-slate-500 dark:text-slate-400">{opt.desc}</p>
                             </div>
                         </button>
                     ))}
@@ -149,16 +158,16 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete
                             onClick={() => setLearningStyle(opt.id as LearningStyle)}
                             className={`p-5 rounded-2xl border-2 text-left transition-all flex items-center gap-4 ${
                                 learningStyle === opt.id 
-                                ? 'border-indigo-600 bg-indigo-50 ring-2 ring-indigo-200' 
-                                : 'border-slate-100 bg-white hover:border-indigo-200'
+                                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 ring-2 ring-indigo-200 dark:ring-indigo-800' 
+                                : 'border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-700 hover:border-indigo-200 dark:hover:border-indigo-500'
                             }`}
                         >
-                            <div className={`p-3 rounded-xl shrink-0 ${learningStyle === opt.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                            <div className={`p-3 rounded-xl shrink-0 ${learningStyle === opt.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-600 text-slate-500 dark:text-slate-300'}`}>
                                 {opt.icon}
                             </div>
                             <div>
-                                <h3 className={`font-bold text-lg ${learningStyle === opt.id ? 'text-indigo-900' : 'text-slate-800'}`}>{opt.label}</h3>
-                                <p className="text-slate-500">{opt.desc}</p>
+                                <h3 className={`font-bold text-lg ${learningStyle === opt.id ? 'text-indigo-900 dark:text-indigo-300' : 'text-slate-800 dark:text-white'}`}>{opt.label}</h3>
+                                <p className="text-slate-500 dark:text-slate-400">{opt.desc}</p>
                             </div>
                         </button>
                     ))}
@@ -169,7 +178,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete
                 {step > 1 && (
                     <button 
                         onClick={() => setStep(step - 1)}
-                        className="text-slate-400 hover:text-slate-600 font-bold px-4 py-2"
+                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold px-4 py-2"
                     >
                         Back
                     </button>
@@ -177,7 +186,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ user, onComplete
                 <button 
                     onClick={handleNext}
                     disabled={(step === 1 && !level) || (step === 2 && !major) || (step === 3 && !goal)}
-                    className="ml-auto bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 transition-all flex items-center gap-2"
+                    className="ml-auto bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center gap-2"
                 >
                     {step === 4 ? "Complete Setup" : "Next Step"} <ArrowRight size={20} />
                 </button>

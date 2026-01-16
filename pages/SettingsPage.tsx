@@ -36,37 +36,37 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ userStats, onSave, o
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={onBack}
-          className="p-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+          className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors"
         >
           &larr;
         </button>
         <div>
-           <h1 className="text-3xl font-bold text-slate-900">Profile Settings</h1>
-           <p className="text-slate-500 text-sm">Update your public profile, avatar, and learning preferences.</p>
+           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Profile Settings</h1>
+           <p className="text-slate-500 dark:text-slate-400 text-sm">Update your public profile, avatar, and learning preferences.</p>
         </div>
       </div>
 
       <form onSubmit={handleSave} className="space-y-8">
         {/* Account Details Section */}
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
-            <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <Shield className="text-indigo-600" size={20} /> Account Details
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-700">
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                <Shield className="text-indigo-600 dark:text-indigo-400" size={20} /> Account Details
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Email Address</label>
                     <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
                             value={userStats.email || 'guest@example.com'}
                             disabled
-                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed outline-none font-medium"
+                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed outline-none font-medium"
                         />
                     </div>
                 </div>
                 <div>
-                     <label className="block text-sm font-semibold text-slate-700 mb-2">Account Role</label>
+                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Account Role</label>
                      <div className="relative">
                          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                              {userStats.role === 'teacher' ? <GraduationCap size={18} /> : <School size={18} />}
@@ -75,7 +75,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ userStats, onSave, o
                             type="text"
                             value={userStats.role.charAt(0).toUpperCase() + userStats.role.slice(1)}
                             disabled
-                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed outline-none font-medium"
+                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed outline-none font-medium"
                         />
                      </div>
                 </div>
@@ -83,11 +83,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ userStats, onSave, o
         </div>
 
         {/* Learning Style Section (NEW) */}
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
-           <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-             <Brain className="text-indigo-600" size={20} /> Learning Style
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-700">
+           <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+             <Brain className="text-indigo-600 dark:text-indigo-400" size={20} /> Learning Style
            </h2>
-           <p className="text-sm text-slate-500 mb-4">Our AI adapts explanations based on how you prefer to learn.</p>
+           <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Our AI adapts explanations based on how you prefer to learn.</p>
            
            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
@@ -101,8 +101,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ userStats, onSave, o
                     onClick={() => setSelectedStyle(style.id as LearningStyle)}
                     className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
                         selectedStyle === style.id 
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700 font-bold' 
-                        : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                        ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-bold' 
+                        : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
                     }`}
                   >
                       {style.icon}
@@ -113,32 +113,32 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ userStats, onSave, o
         </div>
 
         {/* Name Section */}
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
-           <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-             <User className="text-indigo-600" size={20} /> Personal Info
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-700">
+           <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+             <User className="text-indigo-600 dark:text-indigo-400" size={20} /> Personal Info
            </h2>
            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Display Name</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Display Name</label>
               <input 
                 type="text" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-slate-900 font-medium"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white font-medium"
                 placeholder="Enter your display name"
                 required
               />
-              <p className="text-xs text-slate-400 mt-2">This is how you will appear on leaderboards and in classes.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">This is how you will appear on leaderboards and in classes.</p>
            </div>
         </div>
 
         {/* Avatar Section */}
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-700">
            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <Sparkles className="text-amber-500" size={20} /> Choose Avatar
               </h2>
               {selectedAvatar && (
-                 <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+                 <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-600">
                     <img src={selectedAvatar} alt="Selected" className="w-5 h-5 rounded-full" />
                     <span>Selected</span>
                  </div>
@@ -156,14 +156,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ userStats, onSave, o
                      onClick={() => handleAvatarSelect(url)}
                      className={`relative rounded-xl overflow-hidden transition-all duration-200 aspect-square group ${
                         isSelected 
-                        ? 'ring-4 ring-indigo-500 ring-offset-2 scale-105' 
-                        : 'hover:scale-105 ring-1 ring-slate-100'
+                        ? 'ring-4 ring-indigo-500 ring-offset-2 dark:ring-offset-slate-800 scale-105' 
+                        : 'hover:scale-105 ring-1 ring-slate-100 dark:ring-slate-700'
                      }`}
                    >
                      <img 
                        src={url} 
                        alt={seed} 
-                       className="w-full h-full object-cover bg-slate-50"
+                       className="w-full h-full object-cover bg-slate-50 dark:bg-slate-700"
                      />
                      {isSelected && (
                        <div className="absolute inset-0 bg-indigo-900/10 flex items-center justify-center">
@@ -182,13 +182,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ userStats, onSave, o
         <div className="flex items-center gap-4">
            <button 
              type="submit"
-             className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all flex items-center gap-2"
+             className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center gap-2"
            >
              <Save size={18} /> Save Changes
            </button>
            
            {success && (
-              <span className="text-emerald-600 font-medium animate-in fade-in slide-in-from-left-2 flex items-center gap-2">
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium animate-in fade-in slide-in-from-left-2 flex items-center gap-2">
                  <Check size={18} /> Saved successfully!
               </span>
            )}
