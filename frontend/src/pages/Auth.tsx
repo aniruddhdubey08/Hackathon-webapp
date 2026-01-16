@@ -6,6 +6,45 @@ const Auth: React.FC = () => {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
 
+    // Form State
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleLogin = async () => {
+        setError(null);
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('http://localhost:3001/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Login failed');
+            }
+
+            // Login Success
+            console.log('Login successful:', data);
+            // Save mock session (in real app, save token)
+            localStorage.setItem('user', JSON.stringify(data));
+
+            navigate('/map');
+        } catch (err: any) {
+            console.error('Login error:', err);
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div style={styles.pageContainer}>
             <div style={styles.gridBg} />
@@ -28,6 +67,12 @@ const Auth: React.FC = () => {
 
                 {/* Form */}
                 <div style={styles.form}>
+                    {error && (
+                        <div style={styles.errorBanner}>
+                            {error.toUpperCase()}
+                        </div>
+                    )}
+
                     <div style={styles.inputGroup}>
                         <label style={styles.label}>EXPLORE ID / EMAIL</label>
                         <div style={styles.inputWrapper}>
@@ -35,6 +80,8 @@ const Auth: React.FC = () => {
                                 type="text"
                                 placeholder="ENTER IDENTIFIER"
                                 style={styles.input}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                             <User size={18} color="#5A6B89" style={styles.inputIcon} />
                         </div>
@@ -47,6 +94,9 @@ const Auth: React.FC = () => {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="••••••••••••"
                                 style={styles.input}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                             />
 
 
@@ -64,8 +114,12 @@ const Auth: React.FC = () => {
                         </div>
                     </div>
 
-                    <button style={styles.submitButton} onClick={() => navigate('/map')}>
-                        <span>ACCESS SYSTEM</span>
+                    <button
+                        style={{ ...styles.submitButton, opacity: isLoading ? 0.7 : 1 }}
+                        onClick={handleLogin}
+                        disabled={isLoading}
+                    >
+                        <span>{isLoading ? 'AUTHENTICATING...' : 'ACCESS SYSTEM'}</span>
                         <ArrowRight size={18} />
                     </button>
 
@@ -250,6 +304,18 @@ const styles: Record<string, React.CSSProperties> = {
         gap: '8px',
         boxShadow: '0 0 20px rgba(255, 92, 176, 0.4)',
         fontFamily: 'var(--font-display)',
+        transition: 'all 0.2s',
+    },
+    errorBanner: {
+        backgroundColor: 'rgba(234, 67, 53, 0.1)',
+        border: '1px solid #EA4335',
+        color: '#EA4335',
+        padding: '12px',
+        borderRadius: '8px',
+        fontSize: '11px',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        letterSpacing: '0.5px',
     },
     divider: {
         display: 'flex',

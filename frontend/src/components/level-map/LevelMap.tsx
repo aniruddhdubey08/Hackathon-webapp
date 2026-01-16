@@ -1,7 +1,7 @@
 import React from 'react';
 import LevelNode, { type NodeStatus } from './LevelNode';
 
-interface LevelData {
+export interface LevelData {
     id: string;
     title: string;
     subtitle: string;
@@ -10,56 +10,18 @@ interface LevelData {
     y: number;
 }
 
-const MOCK_LEVELS: LevelData[] = [
-    {
-        id: '1',
-        title: 'Intro to Variables',
-        subtitle: 'Mastered',
-        status: 'mastered',
-        x: 650,
-        y: 150,
-    },
-    {
-        id: '2',
-        title: 'Control Flow',
-        subtitle: 'Current_Objective',
-        status: 'current',
-        x: 450,
-        y: 350,
-    },
-    {
-        id: '3',
-        title: 'Functions',
-        subtitle: 'Locked',
-        status: 'locked',
-        x: 600,
-        y: 550,
-    },
-    {
-        id: '4',
-        title: 'Data Structures',
-        subtitle: 'Locked',
-        status: 'locked',
-        x: 500,
-        y: 750,
-    },
-];
-
-const LevelMap: React.FC = () => {
-
-
-
+const LevelMap: React.FC<{ levels: LevelData[] }> = ({ levels }) => {
 
     // Generate path
     // Simple cubic bezier curve generator through points
     const generatePath = () => {
-        if (MOCK_LEVELS.length < 2) return '';
+        if (levels.length < 2) return '';
 
-        let d = `M ${MOCK_LEVELS[0].x} ${MOCK_LEVELS[0].y}`;
+        let d = `M ${levels[0].x} ${levels[0].y}`;
 
-        for (let i = 0; i < MOCK_LEVELS.length - 1; i++) {
-            const current = MOCK_LEVELS[i];
-            const next = MOCK_LEVELS[i + 1];
+        for (let i = 0; i < levels.length - 1; i++) {
+            const current = levels[i];
+            const next = levels[i + 1];
 
             // Control points for smooth curve
             // This is a simple approximation
@@ -99,7 +61,7 @@ const LevelMap: React.FC = () => {
                     {/* Active path segment could be overlayed here if needed */}
                 </svg>
 
-                {MOCK_LEVELS.map((level) => (
+                {levels.map((level) => (
                     <LevelNode
                         key={level.id}
                         {...level}
