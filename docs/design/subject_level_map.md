@@ -1,35 +1,33 @@
-# Page Design: Subject Level Map
+# Page Design: Network Graph (Subject Map)
 
 ## 1. UX Goal
-**" The Adventure Path"**
-Visualize the curriculum as a journey. The user should feel the urge to "unlock" the next node.
+**"Sector Domination"**
+The curriculum is a territory to be conquered.
 
 ## 2. Sections
-1.  **Header**: Back button, Subject Title, Total Stars/XP in this subject.
-2.  **Scrollable Map**: The core interaction area.
-3.  **Floating Action Button (FAB)**: Rapid "Practice" or "Battle" entry.
+1.  **Coordinates Header**: "SECTOR: PHYSICS [ALPHA]".
+2.  **Network Graph**: The central map.
+3.  **Deploy Button**: "INITIATE NEXT NODE".
 
 ## 3. Components
--   **Map Node**:
-    -   *Circle*: 64px.
-    -   *State - Locked*: Grey, Padlock icon.
-    -   *State - Active*: `Electric Violet` Pulse animation. Bounce effect.
-    -   *State - Completed*: `Success Fern`, Gold Crown or 3 Stars above it.
--   **Path Line**:
-    -   Connects nodes.
-    -   Becomes colored (`Electric Violet`) when the previous node is done.
--   **Checkpoint Chest**:
-    -   Every 5 levels, a bigger box node. Unlocks bonus XP.
+-   **Node (The "Point")**:
+    -   *Active*: Pulsing Cyan orb with rotating rings.
+    -   *Locked*: Gray hexagon with "ACCESS DENIED" tooltip.
+    -   *Captured*: Green Hexagon with checkmark.
+-   **Data Stream (Path)**:
+    -   Animated connecting lines.
+    -   *Active Link*: Blue light travels along the wire.
+-   **Checkpoint**: "Data Cache" box. Unlocks XP.
 
 ## 4. Primary User Actions
-1.  **Start Level**: Tap the big pulsing active node.
-2.  **Review Level**: Tap a completed node to re-practice.
+1.  **Initiate Node**: Click pulsing orb to start.
+2.  **Review Intel**: Click completed node.
 
 ## 5. Feedback & Interaction
--   **Scroll**: The map should start scrolled to the user's current active level (bottom-to-top progression often feels better for climbing).
--   **Unlock Animation**: When a level is beaten, the path fills to the next node, and the lock unlocks (Sound: Click-Clack).
+-   **Scroll**: Parallax starfield background.
+-   **Unlock**: Node turns from Gray to Cyan with a "Power-up" sound effect.
 
 ## 6. Color References
--   **Active Node**: `Electric Violet` (#6366F1)
--   **Locked Node**: `Stone Gray` (#64748B) opacity 0.3.
--   **Path**: `Electric Violet` (Active) / `Stone Gray` (Inactive).
+-   **Active Node**: `Neon Cyan` (#06b6d4)
+-   **Captured**: `Signal Green` (#10b981)
+-   **Locked**: `Glass Edge` (#1e293b)

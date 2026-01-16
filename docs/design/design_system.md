@@ -1,78 +1,67 @@
-# Design System & UX Principles
+# Design System v2: Cyber Command
 
-## 1. Research Insights & UX Philosophy
-Based on the analysis of Codédex, Duolingo, Kahoot, Chess.com, and LeetCode, we prioritize **Clarity, Progression, and Low-Stress Competition**.
-
--   **Codédex**: 8-bit/retro charm reduces "scary" factor of coding. *Principle: Make learning feel like a game world.*
--   **Duolingo**: Immediate feedback and streak mechanics. *Principle: Visual progress is mandatory (bars, paths, flames).*
--   **Kahoot**: Big buttons, simple shapes. *Principle: Low cognitive load interfaces for high-energy moments.*
--   **Chess.com**: Clean functional board, distinct player states. *Principle: Clarity in competitive states.*
--   **LeetCode**: Minimalist problem focus. *Principle: Distraction-free learning zones.*
+## 1. Visual Philosophy
+**"The Intellectual Frontier"**
+The interface is a high-tech tactical dashboard. The user is an operator in a futuristic command center.
 
 **Core Pillars:**
-1.  **Clarity over Flash**: No decorative noise. Every element serves an action.
-2.  **Motivation through Progression**: Always show "Where I am" and "Where I'm going".
-3.  **Competition without Stress**: Celebrate winners, encourage learners. No "shame" for losing.
+1.  **Dark Mode First**: Deep space backgrounds, void blacks, and slate grays.
+2.  **Neon Accents**: High-contrast Cyan (#06b6d4) and Electric Purple (#8b5cf6) against dark backgrounds.
+3.  **Glassmorphism**: Translucent panels with subtle borders and blurs.
+4.  **Tactical Typography**: Monospace headers for data, clean sans-serif for readability.
 
 ---
 
-## 2. Color Palette (Strict)
-This palette is designed to be **vibrant yet focused**. It minimizes eye strain (avoiding pure #000/#FFF) and uses color to denote state clearly.
+## 2. Color Palette (Cyber Compliance)
 
-| Role | Color Name | Hex Code | Justification |
+| Role | Color Name | Hex Code | Usage |
 | :--- | :--- | :--- | :--- |
-| **Primary** | **Electric Violet** | `#6366F1` | Energetic, modern feel. Used for primary CTAs and active states. Represents "Magic/Digital" learning. |
-| **Secondary** | **Success Fern** | `#22C55E` | Distinct from standard "tech green". Biophilic and calming. Used for correct answers and completion. |
-| **Accent** | **Spark Orange** | `#F59E0B` | Warm and urgent but not alarming. Used for Streaks, XP, and "Hot" items. |
-| **Background** | **Cloud Mist** | `#F8FAFC` | Low-contrast off-white. Reduces glare compared to pure white. |
-| **Surface** | **Card White** | `#FFFFFF` | For cards and modal layers. Creates depth against Cloud Mist. |
-| **Text Primary**| **Ink Slate** | `#1E293B` | High reliability. Softer than pure black for long reading sessions. |
-| **Text Muted** | **Stone Gray** | `#64748B` | For secondary labels and hints. |
-| **Error** | **Soft Rose** | `#F43F5E` | Noticeable but not aggressive. "Try again" rather than "FAILURE". |
+| **Background** | **Void Black** | `#020617` | Main page background. Deepest layer. |
+| **Surface** | **Command Slate** | `#0f172a` | Card backgrounds, panels. |
+| **Primary** | **Neon Cyan** | `#06b6d4` | Primary actions, active states, "Systems Online". |
+| **Secondary** | **Plasma Purple** | `#a855f7` | Secondary actions, "XP/Data" resource. |
+| **Text Primary** | **Hologram White** | `#f8fafc` | High readability text. |
+| **Text Muted** | **Terminal Gray** | `#94a3b8` | Subtitles, metadata. |
+| **Success** | **Signal Green** | `#10b981` | "Operation Successful", Correct Answer. |
+| **Error** | **Critical Red** | `#ef4444` | "System Failure", Wrong Answer. |
+| **Border** | **Glass Edge** | `#1e293b` | Subtle borders on cards (1px). |
 
-**Usage Rules:**
--   **60-30-10 Rule**: 60% Background/Surface, 30% Text, 10% Accents (Primary/Secondary).
--   NEVER use gradients for text (legibility).
--   Gradients allowed ONLY on Primary Action Buttons and Hero Cards.
+**Gradients:**
+-   *Cyber Glow*: `linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)`
 
 ---
 
 ## 3. Typography
-**Font Family**: `Inter` or `Nunito` (Rounded sans-serif).
-*Why? High readability on screens, rounded edges feel friendlier and less "academic".*
+**Font Family**: `Inter` (Body) + `JetBrains Mono` or `Roboto Mono` (Headers/Data).
 
--   **Headings (H1-H3)**: Bold, tight letter spacing. used for impact.
--   **Body**: Regular weight, 1.5 line height for readability.
--   **Labels/Buttons**: Semi-Bold or Bold, often Uppercase for short actions.
-
-**Hierarchy:**
--   **Level 1**: Page Titles (24px+)
--   **Level 2**: Section Headers / Card Titles (20px)
--   **Level 3**: Body Text / Questions (16px)
--   **Level 4**: Captions / Metadata (14px - Muted)
+-   **Headings**: Monospace, Uppercase, Letter-spacing `0.05em`.
+    -   *H1*: "MISSION BRIEFING"
+-   **Body**: Clean sans-serif, high legibility.
+-   **Data/Numbers**: Monospace.
 
 ---
 
-## 4. Spacing & Layout
-**Grid System**: 8px (0.5rem) base unit.
--   Margins: 16px (Mobile), 32px (Desktop).
--   Card Padding: 16px or 24px.
--   Gap: 8px, 16px, 32px.
+## 4. Spacing & Components
 
-**Container Philosophy**:
--   **Cards**: All content lives in "Cards" (White surface, border-radius 12px or 16px, subtle shadow).
--   **Focus Mode**: In learning/quiz pages, hide navigation. Center the content.
+**Card Style (The "Module"):**
+-   Background: `Command Slate` (#0f172a) at 90% opacity.
+-   Border: 1px solid `Glass Edge` (#1e293b).
+-   Shadow: `0 0 10px rgba(6, 182, 212, 0.1)` (Subtle Cyan Glow).
+-   Corner Radius: 4px or 8px (Sharper, more industrial).
+
+**Buttons:**
+-   *Primary Protocol*: Solid Cyan gradient background, Black text (Bold). "GLOW" on hover.
+-   *Tactical Outline*: Transparent background, Cyan border, Cyan text.
+-   *Shape*: Cut corners (chamfered) or slightly rounded (2px).
+
+**Decorations:**
+-   **Scanlines**: Subtle horizontal lines overlay (optional).
+-   **Grid**: Faint background grid pattern.
+-   **Tech Markers**: Small corner brackets `[ ]` or `+` signs in corners of cards.
 
 ---
 
-## 5. Interaction & Feedback
--   **Buttons**:
-    -   *Primary*: Solid Violet, 100% width on mobile. High elevation on hover.
-    -   *Secondary*: Outline or Ghost.
--   **Feedback components**:
-    -   *Success*: Pop-in animation, Green border glow, Sound effect (optional).
-    -   *Error*: Shake animation, Red border glow, "Don't worry, try again" text.
--   **Micro-interactions**:
-    -   Hovers: Lift up 2px.
-    -   Clicks: Scale down 0.98.
-    -   Progress Bars: Fill animation must be smooth (>300ms).
+## 5. Interaction Principles
+-   **Hover**: Elements "light up" (increase brightness/glow).
+-   **Click**: Immediate mechanical response.
+-   **Transitions**: Fast, snappy (0.2s). No "bouncy" springs to emphasize machine precision.

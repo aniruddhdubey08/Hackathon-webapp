@@ -1,40 +1,33 @@
-# Page Design: Quiz Page
+# Page Design: Cognitive Test (Quiz)
 
 ## 1. UX Goal
-**"Flow State"**
-Answer questions rapidly. Instant validation. No waiting.
+**"Combat Simulation"**
+High pressure, tactical execution.
 
 ## 2. Sections
-1.  **Progress Header**: "Question 3 of 5". Life/Hearts counter (optional).
-2.  **Question Area**: Big text.
-3.  **Options Area**: Stacked buttons.
-4.  **Feedback Sheet**: Slides up from bottom after answer.
+1.  **HUD**: Question Counter ("TARGET 3/5"), Health/Integrity bar.
+2.  **Target Data**: The Question.
+3.  **Tactical Options**: The Answers.
+4.  **Debrief Panel**: Feedback.
 
 ## 3. Components
--   **Question Text**: H3, Centered.
+-   **Question**: "DECRYPT THE FOLLOWING:" (H3 Monospace).
 -   **Option Button**:
-    -   Large hit area (min-height 50px).
-    -   Default: White background, Gray border.
-    -   Hover: Light Violet background.
-    -   *Selected*: Thick Violet border.
--   **Check Button**: "Check" (`Electric Violet`). Becomes "Continue" after checking.
+    -   *Default*: Dark Slate, Thin Border.
+    -   *Hover*: Glitch effect, Border turns Cyan.
+    -   *Selected*: Filled Cyan/Purple opacity.
+    -   *Shape*: Chamfered corners (Tactical sci-fi look).
+-   **Submit**: "EXECUTE" button.
 
 ## 4. Primary User Actions
-1.  **Select Option**: Taps an answer (visual state change).
-2.  **Submit**: Taps "Check".
-3.  **Advance**: Taps "Continue".
+1.  **Select Target**: Click answer.
+2.  **Execute**: Submit.
 
 ## 5. Feedback & Interaction
--   **Correct Answer**:
-    -   Option turns `Success Fern` background.
-    -   Bottom sheet slides up: "Nice job!" (Green).
-    -   Sound: Happy chime.
--   **Wrong Answer**:
-    -   Option turns `Soft Rose` background.
-    -   Bottom sheet slides up: "Correct answer is..." (Red).
-    -   Sound: Soft thud.
+-   **Correct**: "TARGET NEUTRALIZED". Green flash.
+-   **Wrong**: "SYSTEM COMPROMISED". Red flash + Screen shake.
 
 ## 6. Color References
--   **Correct**: `Success Fern` (#22C55E)
--   **Wrong**: `Soft Rose` (#F43F5E)
--   **Selected**: `Electric Violet` (#6366F1)
+-   **Correct**: `Signal Green` (#10b981)
+-   **Wrong**: `Critical Red` (#ef4444)
+-   **HUD**: `Neon Cyan` (#06b6d4)

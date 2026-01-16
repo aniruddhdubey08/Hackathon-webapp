@@ -1,35 +1,32 @@
-# Page Design: Leaderboard
+# Page Design: Global Telemetry (Leaderboard)
 
 ## 1. UX Goal
-**"Social Status"**
-See where I stand. Desire to climb.
+**"Hierarchy of Command"**
+See who is the supreme commander.
 
 ## 2. Sections
-1.  **League Header**: "Ruby League" (Context).
-2.  **Top 3 Podium**: Visual special treatment for winners.
-3.  **List View**: Rest of the players.
-4.  **Sticky User Row**: Always show "Me" at the bottom if scrolled away.
+1.  **League Selector**: "DIAMOND SECTOR".
+2.  **Top Operatives**: Top 3 cards.
+3.  **Agent List**: Data Table style.
+4.  **Target Lock**: Your position.
 
 ## 3. Components
--   **Podium**:
-    -   #1 in center (Highest), #2 Left, #3 Right.
-    -   Gold/Silver/Bronze colors (Metallic gradients allowed here).
+-   **Top Operatives**:
+    -   Holographic cards.
+    -   Avatars with "Glitch" aura.
 -   **List Row**:
-    -   Rank Number, Avatar, Name, XP (Bold).
-    -   "Me" row: Highlighted with `Electric Violet` border and light background.
--   **Promotion Zone**:
-    -   Green line indicating "Keep above this to promote".
-    -   Red line "Demotion zone".
+    -   Monospace rank: "OP-001".
+    -   Status: "ONLINE" (Green dot).
+    -   XP: Digital readout.
 
 ## 4. Primary User Actions
-1.  **View Profile**: Click a user.
-2.  **Cheer/Poke**: (Optional social interaction).
+1.  **Inspect Agent**: Click row.
+2.  **Filter Sector**: Change league tabs.
 
 ## 5. Feedback & Interaction
--   **Scroll**: Infinite scroll if needed.
--   **Update**: "Live" tag if scores are updating in real-time.
+-   **Your Row**: Sticky at bottom if scrolled. Glowing border `Neon Cyan`.
 
 ## 6. Color References
--   **#1 Gold**: `#F59E0B`
--   **Promotion Zone**: `Success Fern` light background.
--   **Demotion Zone**: `Soft Rose` light background.
+-   **Rank 1**: `Neon Cyan`
+-   **Rank 2**: `Plasma Purple`
+-   **Rank 3**: `Signal Green`

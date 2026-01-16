@@ -1,51 +1,46 @@
-# Visual Generation Prompts (Web App / Desktop)
+# Visual Generation Prompts (Cyber Command v2)
 
-These prompts are optimized for generating high-fidelity **Desktop Web Application** mockups.
-
-**Global Style Keywords:**
-`Desktop Web App UI, 16:9 Aspect Ratio, Clean, Modern, Vector-style illustrations, Vibrant Colors, High Fidelity, Dribbble Trending, Soft Shadows, Rounded Corners, Sidebar Navigation.`
-
-**Color Palette Injection:**
-`Primary #6366F1 (Electric Violet), Secondary #22C55E (Success Fern), Accent #F59E0B (Spark Orange), Background #F8FAFC (Cloud Mist), Text #1E293B (Ink Slate).`
+**Theme:** Futuristic, Cyberpunk, Tactical Command Center, Dark Mode.
+**Global Style:** `Sci-fi UI, FUI (Futuristic User Interface), Dark Glassmorphism, Neon Cyan & Purple, Data Visualization, High Fidelity, Octane Render, 16:9 Aspect Ratio.`
 
 ---
 
 ## 1. Home / Landing Page
 **Prompt:**
-> Desktop website landing page for a gamified learning platform. 16:9 aspect ratio. Wide Hero section features a playful 3D illustration of a student holding a gold trophy on the right, floating on a soft purple cloud. Left side has large headline text "Master Your Subjects" in bold dark slate and a "Start Battling" button in Electric Violet #6366F1. Minimalist header navigation. Three feature cards arranged horizontally below the hero. Background is off-white #F8FAFC. Clean, joyful, inviting atmosphere.
+> Desktop website landing page 16:9. Cyberpunk command center style. "DOMINATE THE INTELLECTUAL FRONTIER" headline in glitchy white monospace font. Background is deep void black with faint grid lines. A large glowing "INITIALIZE UPLINK" button in Neon Cyan #06b6d4. A 3D hologram of a human brain or network node floats on the right. Tech markers and data readouts in corners. Sleek, mysterious, high-tech.
 
 ## 2. Login Page
 **Prompt:**
-> Desktop web login screen. Split screen layout. Left half is a vibrant illustration of a map or game world in Electric Violet tones. Right half is a clean white login form centered vertically. "Welcome Back" header. Two wide input fields with thin borders. "Log In" button is full width, solid Electric Violet. Social login button "Continue with Google" below. Professional, spacious, modern web design.
+> Futuristic security login screen. Dark background with floating dust particles. Center screen is a glass panel with "IDENTIFICATION REQUIRED" text. Two input fields look like command line prompts with Cyan blinking cursors. A "Scan Biometrics" button below. The UI feels like accessing a secret government server. Sharp edges, glowing borders.
 
 ## 3. Student Dashboard
 **Prompt:**
-> Gamified student dashboard desktop UI. Left sidebar navigation in dark slate #1E293B with icons for Home, Map, Battle, Leaderboard. Main content area on the right with white background. Top header shows welcome text and stats (Streaks, XP). Main focus is a "Next Lesson" banner at the top-center. Below it, a 3-column grid of subject cards (Math, Science, History). Right panel shows a "Quest/Daily Goal" widget. Organized, dashboard interface.
+> Sci-fi tactical dashboard UI. Top HUD bar shows rank "CADET" and rapidly changing data numbers. Main content is a "Mission Control" panel. Modules for Physics, Math, and History look like data files or weapon loadouts. Progress bars are thin laser lines in Cyan. A mini-map in the corner shows a network graph. Dark slate colors, blue glow effects.
 
 ## 4. Subject Level Map
 **Prompt:**
-> Full-screen desktop game map interface for a learning web app. A winding path flows from left to right across the screen. Background is a light blue-gray gradient. Circular nodes are scattered along the path. Completed nodes are green with crowns. Current node is a large pulsing Electric Violet circle. Sidebar navigation visible on the left. The path looks like a fun adventure board game. High fidelity vector art.
+> Full screen network graph interface. Deep space background with distant stars. The "Level Map" is a constellation of connected nodes. Active nodes pulse with electric blue light. Completed nodes are green hexagons. The path between them is a data stream. Creating a sense of navigating a star map or neural network.
 
-## 5. Learning Page (Content)
+## 5. Learning Page
 **Prompt:**
-> Desktop educational content interface. Left sidebar navigation collapsed or mini. Main content is centered in a wide article card max-width 800px. Progress bar fixed at the top. Well-formatted text with clear headings and a large diagram in the center showing physics vectors. Right sidebar shows "Key Terms" and "Notes" tools. Clean white paper-like texture on a soft gray background. Focus mode.
+> Data uplink interface. The main content is a text readout on a high-transparency black glass pane. "DOWNLOAD IN PROGRESS" bar at the top. Holographic schematic diagrams (e.g., a suspension bridge force vector) project from the screen. Monospace typography. "ACKNOWLEDGE" button at the bottom. The user feels like they are downloading knowledge directly into their brain.
 
 ## 6. Quiz Page
 **Prompt:**
-> Desktop quiz interface. Centered layout. Large bold question text at the top. Four answer options arranged in a 2x2 grid (two rows of two) for better use of desktop space. Selected answer has a thick Electric Violet border. "Next Question" button floating on the right. Sidebars are hidden or dimmed to prioritize focus. High contrast, large clickable areas.
+> Tactical combat simulation UI. Top center shows a red "Enemy Integrity" bar. The Question is displayed as an "Incoming Transmission". Four answer buttons are styled as chamfered tactical keys. When selected, they glow Neon Purple. "TARGET LOCKED" feedback text. High contrast, intense atmosphere.
 
 ## 7. Battle Lobby
 **Prompt:**
-> Competitive matchmaking desktop screen. Dark mode or dimmed overlay. Center of the screen features a massive "VS" badge with glowing effects. Left panel shows "You" (Avatar + Stats), Right panel shows "Opponent" (Scanning animation or silhouette). "Searching for worthy opponent..." text in neon orange #F59E0B. Background has dynamic abstract shapes. High energy gaming aesthetic.
+> Multiplayer matchmaking screen. Dark mode. A large rotating radar sweep animation in the center. Green "Ping" dots appear. Text "SCANNING FREQUENCIES..." blinks in orange. User stats shown in a holographic side panel. The visual language of a fighter jet HUD or submarine sonar.
 
 ## 8. Battle Page
 **Prompt:**
-> Split-screen real-time battle desktop UI. The screen is divided vertically. Left side is the Player (Green tint), Right side is the Opponent (Red tint). Top bar is a "Tug-of-War" progress meter. Both sides show the current quiz question simultaneously. Timer in the top center. "Opponent Scored!" notification appearing on the right side. Fast-paced, arcade-style web interface.
+> Split screen cyber warfare interface. Left side is Blue (You), Right side is Purple (Enemy). A "Power Balance" bar at the top shows energy pushing back and forth. Both sides display code snippets and quiz questions. Sparks fly where the colors meet. "SYSTEM WARNING" red alerts flash on the losing side. Fast-paced, chaotic, arcade action.
 
-## 9. Result Page (Victory)
+## 9. Result Page
 **Prompt:**
-> Desktop victory screen. Big modal or full-page overlay. Confetti rain effect. Center features a large 3D trophy or character celebrating. "VICTORY!" text in gold. Three cards below showing "XP Gained", "Coins Earned", and "Accuracy". "Battle Again" button in Electric Violet is prominent. "Back to Dashboard" secondary link. Celebratory and rewarding.
+> Mission Debrief screen. "MISSION SUCCESS" stamped in glowing green stencil font. Background is a victory freeze-frame. Results are shown as a "Data Log" receipt. An XP bar fills up with liquid neon animation. "RE-DEPLOY" button is the primary focus. Industrial, military-grade aesthetic.
 
 ## 10. Leaderboard
 **Prompt:**
-> Desktop leaderboard webpage. Full width table layout. Top header explains the current league (e.g., "Diamond League"). Top 3 players are showcased in a "Podium" widget above the list. The main list below is a clean data table with columns for Rank, Player, XP, and Status. The user's row is highlighted at the bottom or within the list. Sidebar navigation on the left. Professional data design with gamified flair.
+> Global surveillance list. A data table showing "Top Operatives". The list looks like a hacking terminal or FBI wanted list. Avatars have a digital glitch filter. The user's row is highlighted with a bright Cyan scanline. Columns for "Rank", "Operative", and "Intel".

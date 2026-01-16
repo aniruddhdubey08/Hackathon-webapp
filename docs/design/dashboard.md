@@ -1,41 +1,36 @@
-# Page Design: Student Dashboard
+# Page Design: Command Center (Dashboard)
 
 ## 1. UX Goal
-**"Your Command Center"**
-Show progress instantly and guide the user to their next learning action. "What should I do next?" should be answered in <1s.
+**"Operational Awareness"**
+Everything is a data stream. The user feels like a commander overseeing their progress.
 
 ## 2. Sections
-1.  **Header**: Profile + Streak + Currency.
-2.  **Daily Goal / Streak**: High visibility progress.
-3.  **Subject Carousel**: Main entry point to learning.
-4.  **Battle Arena Entry**: Secondary entry point.
+1.  **Top HUD**: Rank, XP, Credits (Cryptocurrency style UI).
+2.  **Mission Log**: "Daily Objectives".
+3.  **Active Modules**: Subject list.
+4.  **Mini-Map**: Rapid access to the Subject Map.
 
 ## 3. Components
--   **Header Bar**:
-    -   *Surface*: `Card White`, Sticky top.
-    -   *Streak Icon*: Fire emoji + Number in `Spark Orange`.
-    -   *Avatar*: Circle with border `Electric Violet`.
--   **"Up Next" Card**:
-    -   Large Card at top.
-    -   "Continue Physics: Newton's Laws".
-    -   *Progress Bar*: `Success Fern` filled 40%.
-    -   *Button*: "Resume" (`Electric Violet`).
--   **Subject Cards (Grid)**:
-    -   Icon + Subject Name.
-    -   "Level 3".
-    -   Simple visual indicates mastery (Stars).
+-   **HUD Bar**:
+    -   Fixed top. Glassmorphism.
+    -   *Rank*: "CADET [Level 4]". Monospace.
+    -   *Streak*: "SYSTEM UPTIME: 5 DAYS".
+-   **Active Module Card** (Subject):
+    -   *Header*: "PHYSICS [MODULE A]".
+    -   *Progress*: Thin Cyan line.
+    -   *Button*: "RESUME UPLINK".
+-   **Mission Log**:
+    -   List of checkbox items.
+    -   Checked = Green "COMPLETED" stamp.
 
 ## 4. Primary User Actions
-1.  **Resume Learning**: Click big top card.
-2.  **Choose Subject**: Click subject card to go to Map.
-3.  **Check Leaderboard**: Tab navigation or link.
+1.  **Resume Uplink**: Continue active subject.
+2.  **Scan Network**: Go to Subject Map.
 
 ## 5. Feedback & Interaction
--   **Streak**: Tooltip on hover explaining how to keep it.
--   **Card Hover**: Lift effect + subtle shadow increase.
--   **Progress**: Animate bars from 0 to current value on load.
+-   **Hover on Card**: Corner brackets `[ ]` expand outwards.
+-   **Numbers**: "Count up" animation on load.
 
 ## 6. Color References
--   **Streak**: `Spark Orange` (#F59E0B)
--   **Primary Action**: `Electric Violet` (#6366F1)
--   **Completion/Good**: `Success Fern` (#22C55E)
+-   **Progress**: `Neon Cyan` (#06b6d4)
+-   **Text**: `Hologram White` (#f8fafc)

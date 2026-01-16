@@ -1,32 +1,29 @@
-# Page Design: Battle Page
+# Page Design: Combat Protocol (Battle Page)
 
 ## 1. UX Goal
-**"Adrenaline"**
-High stakes, high speed. Clear visibility of "Who is winning?".
+**"Electronic Warfare"**
+Dominating the opponent through speed.
 
 ## 2. Sections
-1.  **Header**: Timer + Score vs Score.
-2.  **tug-of-War Bar**: Visual representation of the lead.
-3.  **Question Area**: Similar to Quiz Page but more compact.
-4.  **Power-up Bar** (Bonus): Freeze, Skip.
+1.  **Power Grid**: The "Tug of War" bar, but styled as a Power Balance bar.
+2.  **Countdown**: Digital clock readout.
+3.  **Terminal**: The Question interface.
 
 ## 3. Components
--   **Tug-of-War Bar**:
-    -   Full width bar at top.
-    -   Split 50/50 initially.
-    -   Pushes Left/Right based on correct speed.
-    -   Colors: You (`Success Fern`) vs Enemy (`Soft Rose`).
--   **Timer**: Large, counting down. Colors Red when < 5s.
+-   **Power Grid**:
+    -   Split bar. Cyan (You) pushing against Purple (Enemy).
+    -   "Overdrive" sparks where colors meet.
+-   **Question**: Displayed as a "Incoming Transmission".
+-   **Bonus**: "EMP Blast" (Freeze opponent) icon.
 
 ## 4. Primary User Actions
-1.  **Answer**: Tap options (Rapid fire).
-2.  **Use Power-up**: Tap icon.
+1.  **Fire Counter-Measure**: Select Answer.
+2.  **Deploy Tech**: Use EMP.
 
 ## 5. Feedback & Interaction
--   **Correct/Wrong**: Faster feedback than standard quiz. No logic explanation sheet, just "Right/Wrong" flash to save time.
--   **Enemy Action**: When enemy answers correct, screen shakes slightly or bar pushes against you. "Opponent scored!" toast.
+-   **Enemy Score**: Screen glitch. "HULL BREACH DETECTED".
+-   **You Score**: Grid pushes forward with a laser sound.
 
 ## 6. Color References
--   **My Score**: `Success Fern` (#22C55E)
--   **Enemy Score**: `Soft Rose` (#F43F5E)
--   **Timer**: `Ink Slate` -> `Spark Orange` -> `Soft Rose`.
+-   **You**: `Neon Cyan` (#06b6d4)
+-   **Enemy**: `Plasma Purple` (#a855f7)

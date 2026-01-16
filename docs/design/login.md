@@ -1,34 +1,29 @@
-# Page Design: Login / Signup
+# Page Design: System Entry (Login)
 
 ## 1. UX Goal
-**"Frictionless Entry"**
-Reduce drop-off. Allow users to enter with minimal effort.
+**"Identity Verification"**
+Accessing a secure facility.
 
 ## 2. Sections
-1.  **Centered Card**: The main interaction area.
-2.  **Background**: Simple pattern or solid color to keep focus on the card.
+1.  **Auth Module**: Centered glass panel.
+2.  **Background**: Animated particles or slow-moving starfield.
 
 ## 3. Components
--   **Auth Card**:
-    -   *Surface*: `Card White`, Shadow-lg.
-    -   *Tabs*: "Login" vs "Signup" (Segmented Control style).
-    -   *Input Fields*:
-        -   Border: 1px solid `Stone Gray` (Light). Focus: `Electric Violet`.
-        -   Label: Small, Uppercase `Stone Gray`.
-    -   *Submit Button*: Full width `Electric Violet`. "Let's Go!".
-    -   *Social Auth*: "Continue with Google" (Outline Button, `Ink Slate` text).
+-   **Auth Module**:
+    -   *Header*: "IDENTIFICATION REQUIRED".
+    -   *Inputs*: Dark gray background, Cyan bottom border.
+        -   *Focus*: Border glows, "Scanning..." micro-text appears.
+    -   *Submit Button*: "GRANT ACCESS" (Full width Neon Cyan).
+    -   *Decorations*: "Sector 7" label in corner. "Secure Connection" badge.
 
 ## 4. Primary User Actions
-1.  **Switch Mode**: Toggle between Login/Signup.
-2.  **Submit Form**: Validate and enter Dashboard.
-3.  **Forgot Password**: Text link `Element Violet`.
+1.  **Enter Credentials**: Username / Password.
+2.  **Biometric Bypass**: (Google Auth) "Authorized External Link".
 
 ## 5. Feedback & Interaction
--   **Input Focus**: Border changes to `Electric Violet` (#6366F1).
--   **Error State**: Shake card, Turn border `Soft Rose` (#F43F5E), show text below input.
--   **Success**: Button turns `Success Fern` (#22C55E) and says "Success!", then redirects.
+-   **Success**: "ACCESS GRANTED" green text flash. Transition to Dashboard is a "Zoom in" effect.
+-   **Error**: "ACCESS DENIED" red flash + Glitch effect on the panel.
 
 ## 6. Color References
--   **Card**: `Card White` (#FFFFFF)
--   **Active Border**: `Electric Violet` (#6366F1)
--   **Error**: `Soft Rose` (#F43F5E)
+-   **Border**: `Neon Cyan` (#06b6d4)
+-   **Error**: `Critical Red` (#ef4444)

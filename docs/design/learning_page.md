@@ -1,35 +1,31 @@
-# Page Design: Learning Page (Content)
+# Page Design: Data Uplink (Learning Page)
 
 ## 1. UX Goal
-**"Focus Mode"**
-Read and absorb information without distraction. Prepare for the quiz.
+**"Direct Neural Download"**
+Absorbing information like uploading a skill matrix in The Matrix.
 
 ## 2. Sections
-1.  **Top Bar**: Progress bar (reading position), "Close" button.
-2.  **Content Area**: Text, Diagrams, Video.
-3.  **Bottom Bar**: "Next" or "Start Quiz" button.
+1.  **Progress Thread**: Top "Download Status" bar.
+2.  **Intel Card**: Main content container.
+3.  **Command Bar**: Bottom nav ("ACKNOWLEDGE", "ABORT").
 
 ## 3. Components
--   **Content Card**:
-    -   Centered, max-width 600px.
-    -   Typography: Large Body (18px), generous line-height (1.6).
--   **Interactive Examples**:
-    -   Small inline widgets (e.g., "Click the proton").
-    -   border: 1px solid `Electric Violet`.
--   **Sticky Footer**:
-    -   Always visible "I tried this / I understand" button to move forward.
+-   **Intel Card**:
+    -   High-opacity Black glass background (`rgba(0,0,0,0.8)`).
+    -   *Text*: Monospace for definitions, Sans for explanation.
+    -   *Images*: With "Hologram" filter (scanlines, slight blue tint).
+-   **Interactive Module**:
+    -   Border: Dashed Cyan.
+    -   "INTERACTION REQUIRED" blinking tag.
 
 ## 4. Primary User Actions
-1.  **Read**: Scroll through content.
-2.  **Interact**: Click diagrams/examples.
-3.  **Complete**: Click "Start Quiz" at the bottom.
+1.  **Process Data**: Read/Scroll.
+2.  **Acknowledge**: Click "NEXT" (Cyan Button).
 
 ## 5. Feedback & Interaction
--   **Scroll**: Smooth scroll.
--   **Progress**: Top bar fills as user scrolls.
--   **Completion**: "Start Quiz" button pulses when the user reaches the bottom.
+-   **Scroll**: "Downloading..." percentage updates in top right.
+-   **Completion**: "DOWNLOAD COMPLETE" banner overlay.
 
 ## 6. Color References
--   **Background**: `Card White` (#FFFFFF) for text area.
--   **Highlight**: Light yellow highlight for key terms.
--   **Action**: `Electric Violet` (#6366F1).
+-   **Text**: `Hologram White` (#f8fafc)
+-   **Highlight**: `Neon Cyan` background (low opacity).
