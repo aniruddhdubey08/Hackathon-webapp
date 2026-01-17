@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Loader2, Sparkles, BookOpen, Brain, Play, Lock, CheckCircle, Map, Zap, HelpCircle, ChevronDown, ChevronRight, MessageSquare, Send, AlertCircle, Lightbulb } from 'lucide-react';
+import { Loader2, Sparkles, BookOpen, Brain, Play, Lock, CheckCircle, Map, Zap, HelpCircle, ChevronDown, ChevronRight, MessageSquare, Send, AlertCircle, Lightbulb, WifiOff, PenTool, Image as ImageIcon } from 'lucide-react';
 import { Subject, StudyGuide, Sector, MicroSkill, UserStats } from '../types';
 import { generateStudyGuide, generateSubjectRoadmap, resolveDoubt } from '../services/geminiService';
 
@@ -27,6 +27,9 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
   // Interactive Quiz State
   const [selectedQuizOption, setSelectedQuizOption] = useState<number | null>(null);
   const [showQuizResult, setShowQuizResult] = useState(false);
+  
+  // Fill in the Blank State
+  const [blankAnswer, setBlankAnswer] = useState('');
 
   // Chat State
   const [chatInput, setChatInput] = useState('');
@@ -61,7 +64,7 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                         // Also ensure its sector is expanded
                         setExpandedSectors(prev => prev.includes(sec.id) ? prev : [...prev, sec.id]);
                         found = true;
-                        if (isJoined) handleSkillSelect(skill);
+                        if (isJoined) handleSkillSelect(skill, true); // True = skip fetch if just auto-selecting to avoid flash
                         break;
                     }
                 }
@@ -85,22 +88,27 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
       );
   };
 
-  const handleSkillSelect = async (skill: MicroSkill) => {
+  const handleSkillSelect = async (skill: MicroSkill, skipFetch: boolean = false) => {
     // Check if locked
     const allSkills: MicroSkill[] = sectors.flatMap(s => s.levels.flatMap(l => l.skills));
     const idx = allSkills.findIndex(s => s.id === skill.id);
-    const isLocked = idx > 0 && !completedTopicIds.includes(allSkills[idx - 1].id);
+    const prevSkill = idx > 0 ? allSkills[idx - 1] : null;
+    const isLocked = idx > 0 && prevSkill && !completedTopicIds.includes(prevSkill.id);
 
-    if (isLocked) return;
+    if (isLocked) {
+        alert(`LOCKED: You must score at least 70% on "${prevSkill?.title}" to unlock this MicroSkill.`);
+        return;
+    }
     
     setSelectedSkill(skill);
     setChatHistory([]); // Reset chat for new topic
 
-    if (!isJoined) return; 
+    if (!isJoined || skipFetch) return; 
 
     setLoadingContent(true);
     setStudyGuide(null);
-    setSelectedQuizOption(null); 
+    setSelectedQuizOption(null);
+    setBlankAnswer('');
     setShowQuizResult(false);
     
     try {
@@ -111,7 +119,9 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
         setStudyGuide(guide);
       }
     } catch (error) {
-      alert("Could not generate content.");
+      // Error handled in service, fallback returned usually. 
+      // If it throws here, it's critical.
+      console.error("Critical error fetching content", error);
     } finally {
       setLoadingContent(false);
     }
@@ -121,6 +131,12 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
     if (showQuizResult) return;
     setSelectedQuizOption(idx);
     setShowQuizResult(true);
+  };
+
+  const handleFillInBlankSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (showQuizResult) return;
+      setShowQuizResult(true);
   };
 
   const handleSendChat = async (e: React.FormEvent) => {
@@ -222,11 +238,11 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                                                         return (
                                                             <button 
                                                                 key={skill.id}
-                                                                disabled={isLocked}
+                                                                // Don't disable button completely, so we can show alert
                                                                 onClick={() => handleSkillSelect(skill)}
                                                                 className={`w-full text-left p-2 rounded-lg text-sm flex items-start gap-2 transition-all
                                                                     ${isActive ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-400'}
-                                                                    ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}
+                                                                    ${isLocked ? 'opacity-60 grayscale' : ''}
                                                                 `}
                                                             >
                                                                 <div className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 border 
@@ -285,6 +301,14 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
               <>
                  {/* CONTENT CARD */}
                  <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200 dark:shadow-slate-900/20 border border-slate-100 dark:border-slate-700 overflow-hidden animate-in fade-in duration-500">
+                    
+                    {studyGuide.isFallback && (
+                       <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 px-6 py-2 text-sm font-bold flex items-center justify-center gap-2 border-b border-amber-200 dark:border-amber-800">
+                          <WifiOff size={16} /> 
+                          Offline Mode: High traffic detected. Showing cached content.
+                       </div>
+                    )}
+
                     <div className="bg-gradient-to-r from-indigo-50 to-white dark:from-slate-800 dark:to-slate-750 p-8 border-b border-indigo-50 dark:border-slate-700">
                         <div className="flex justify-between items-start">
                         <div>
@@ -298,6 +322,20 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                     </div>
                     
                     <div className="p-8 space-y-8">
+                        {/* VISUAL LEARNER IMAGE (Generated via Placeholder) */}
+                        {studyGuide.visualImagePrompt && (
+                            <div className="w-full h-64 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-700 relative group shadow-inner border border-slate-200 dark:border-slate-600">
+                                <img 
+                                    src={`https://image.pollinations.ai/prompt/${encodeURIComponent(studyGuide.visualImagePrompt)}`}
+                                    alt="Visual Concept"
+                                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                />
+                                <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full flex items-center gap-2">
+                                    <ImageIcon size={12} /> AI Visualized
+                                </div>
+                            </div>
+                        )}
+
                         <section>
                             <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-200 mb-3 flex items-center gap-2">
                                 <BookOpen size={20} className="text-indigo-500 dark:text-indigo-400" /> The Big Picture
@@ -321,7 +359,7 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                             </div>
                         </section>
 
-                        {/* Common Misconceptions Section (NEW) */}
+                        {/* Common Misconceptions Section */}
                         {studyGuide.commonMisconceptions && studyGuide.commonMisconceptions.length > 0 && (
                             <section>
                                 <h3 className="text-lg font-bold text-rose-900 dark:text-rose-200 mb-3 flex items-center gap-2">
@@ -340,7 +378,7 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                             </section>
                         )}
 
-                        {/* Practical Application Section (NEW) */}
+                        {/* Practical Application Section */}
                         {studyGuide.practicalApplication && (
                             <section>
                                 <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-200 mb-3 flex items-center gap-2">
@@ -352,59 +390,107 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                             </section>
                         )}
                         
-                        {/* Interactive Element: Mini-Quiz */}
-                        {studyGuide.interactiveElement && studyGuide.interactiveElement.type === 'quiz' && (
+                        {/* INTERACTIVE ELEMENT */}
+                        {studyGuide.interactiveElement && (
                         <section className="bg-indigo-900 text-white rounded-2xl p-8 shadow-lg relative overflow-hidden">
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                <Zap className="text-yellow-400" /> Check Your Understanding
+                                    <Zap className="text-yellow-400" /> 
+                                    {studyGuide.interactiveElement.type === 'fill-in-the-blank' ? 'Complete the Logic' : 'Check Your Understanding'}
                                 </h3>
                                 <p className="text-indigo-200 mb-6 text-lg font-medium">
-                                {studyGuide.interactiveElement.question}
+                                    {studyGuide.interactiveElement.question}
                                 </p>
                                 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {studyGuide.interactiveElement.options.map((option, idx) => {
-                                    let btnClass = "text-left p-4 rounded-xl border-2 transition-all font-semibold ";
-                                    if (showQuizResult) {
-                                        if (idx === studyGuide.interactiveElement!.correctAnswer) {
-                                            btnClass += "bg-emerald-500 border-emerald-400 text-white";
-                                        } else if (idx === selectedQuizOption) {
-                                            btnClass += "bg-rose-500 border-rose-400 text-white";
-                                        } else {
-                                            btnClass += "bg-indigo-800/50 border-indigo-700 text-indigo-300";
-                                        }
-                                    } else {
-                                        btnClass += "bg-indigo-800/50 border-indigo-700 hover:bg-indigo-800 hover:border-indigo-500 text-indigo-100";
-                                    }
-
-                                    return (
-                                        <button 
-                                        key={idx}
-                                        onClick={() => handleOptionClick(idx)}
-                                        disabled={showQuizResult}
-                                        className={btnClass}
-                                        >
-                                        {option}
-                                        </button>
-                                    );
-                                })}
-                                </div>
-                                
-                                {showQuizResult && (
-                                <div className="mt-6 bg-indigo-800/80 p-4 rounded-xl border border-indigo-700 animate-in fade-in slide-in-from-top-2">
-                                    <div className="flex gap-2 items-start">
-                                        <HelpCircle className="text-indigo-300 mt-1 shrink-0" size={20} />
-                                        <div>
-                                            <p className="font-bold text-white mb-1">
-                                            {selectedQuizOption === studyGuide.interactiveElement.correctAnswer ? "Correct!" : "Not quite."}
-                                            </p>
-                                            <p className="text-indigo-200 text-sm leading-relaxed">
-                                            {studyGuide.interactiveElement.explanation}
-                                            </p>
-                                        </div>
+                                {/* INTERACTION TYPE SWITCHER */}
+                                {studyGuide.interactiveElement.type === 'fill-in-the-blank' ? (
+                                    <div className="w-full max-w-md">
+                                        <form onSubmit={handleFillInBlankSubmit} className="flex gap-2">
+                                            <div className="relative flex-1">
+                                                <PenTool className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400" size={18} />
+                                                <input 
+                                                    type="text" 
+                                                    value={blankAnswer}
+                                                    onChange={(e) => setBlankAnswer(e.target.value)}
+                                                    placeholder="Type missing word/code..."
+                                                    disabled={showQuizResult}
+                                                    className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-indigo-500/50 bg-indigo-950/50 text-white focus:border-yellow-400 focus:outline-none disabled:opacity-70 font-mono"
+                                                />
+                                            </div>
+                                            <button 
+                                                type="submit"
+                                                disabled={!blankAnswer.trim() || showQuizResult}
+                                                className="bg-yellow-500 hover:bg-yellow-400 text-indigo-950 font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-50"
+                                            >
+                                                Check
+                                            </button>
+                                        </form>
+                                        
+                                        {showQuizResult && (
+                                            <div className="mt-6 bg-indigo-800/80 p-4 rounded-xl border border-indigo-700 animate-in fade-in slide-in-from-top-2">
+                                                <div className="flex gap-2 items-start">
+                                                    <HelpCircle className="text-indigo-300 mt-1 shrink-0" size={20} />
+                                                    <div>
+                                                        <p className="font-bold text-white mb-1">
+                                                            {blankAnswer.toLowerCase().trim() === studyGuide.interactiveElement.correctAnswerText?.toLowerCase().trim() 
+                                                                ? "Correct!" 
+                                                                : `Not quite. Answer: ${studyGuide.interactiveElement.correctAnswerText}`}
+                                                        </p>
+                                                        <p className="text-indigo-200 text-sm leading-relaxed">
+                                                            {studyGuide.interactiveElement.explanation}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
+                                ) : (
+                                    // STANDARD MULTIPLE CHOICE
+                                    <>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {studyGuide.interactiveElement.options!.map((option, idx) => {
+                                                let btnClass = "text-left p-4 rounded-xl border-2 transition-all font-semibold ";
+                                                if (showQuizResult) {
+                                                    if (idx === studyGuide.interactiveElement!.correctAnswer) {
+                                                        btnClass += "bg-emerald-500 border-emerald-400 text-white";
+                                                    } else if (idx === selectedQuizOption) {
+                                                        btnClass += "bg-rose-500 border-rose-400 text-white";
+                                                    } else {
+                                                        btnClass += "bg-indigo-800/50 border-indigo-700 text-indigo-300";
+                                                    }
+                                                } else {
+                                                    btnClass += "bg-indigo-800/50 border-indigo-700 hover:bg-indigo-800 hover:border-indigo-500 text-indigo-100";
+                                                }
+
+                                                return (
+                                                    <button 
+                                                    key={idx}
+                                                    onClick={() => handleOptionClick(idx)}
+                                                    disabled={showQuizResult}
+                                                    className={btnClass}
+                                                    >
+                                                    {option}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                        
+                                        {showQuizResult && (
+                                        <div className="mt-6 bg-indigo-800/80 p-4 rounded-xl border border-indigo-700 animate-in fade-in slide-in-from-top-2">
+                                            <div className="flex gap-2 items-start">
+                                                <HelpCircle className="text-indigo-300 mt-1 shrink-0" size={20} />
+                                                <div>
+                                                    <p className="font-bold text-white mb-1">
+                                                    {selectedQuizOption === studyGuide.interactiveElement!.correctAnswer ? "Correct!" : "Not quite."}
+                                                    </p>
+                                                    <p className="text-indigo-200 text-sm leading-relaxed">
+                                                    {studyGuide.interactiveElement!.explanation}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                             {/* Background Decoration */}
@@ -431,7 +517,7 @@ export const StudySessionPage: React.FC<StudySessionPageProps> = ({ selectedSubj
                     </div>
                  </div>
 
-                 {/* CHAT INTERFACE (NEW) */}
+                 {/* CHAT INTERFACE */}
                  <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden mt-6">
                     <div className="p-4 bg-slate-50 dark:bg-slate-700/30 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
                         <MessageSquare size={18} className="text-indigo-600 dark:text-indigo-400" />

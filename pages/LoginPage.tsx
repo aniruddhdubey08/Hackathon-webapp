@@ -114,12 +114,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onSignupCl
            <button onClick={onBack} className="mb-6 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex items-center gap-1 text-sm font-medium">
              &larr; Back to Home
            </button>
-           <div className="flex items-center gap-2 mb-6">
-              <div className="bg-indigo-600 p-2 rounded-lg">
+           <button onClick={onBack} className="flex items-center gap-2 mb-6 group cursor-pointer">
+              <div className="bg-indigo-600 p-2 rounded-lg group-hover:scale-105 transition-transform">
                  <Brain className="text-white" size={20} />
               </div>
               <span className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">MindQuest</span>
-           </div>
+           </button>
 
            {/* --- LOGIN VIEW --- */}
            {view === 'login' && (

@@ -6,6 +6,7 @@ export interface Question {
   correctAnswerIndex: number;
   explanation: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
+  isFallback?: boolean;
 }
 
 export interface QuizResult {
@@ -88,21 +89,30 @@ export interface Subject {
   masteryLevel?: string; 
 }
 
+export type InteractiveElementType = 'quiz' | 'fill-in-the-blank';
+
 export interface StudyGuide {
   topic: string;
   overview: string;
   keyConcepts: { title: string; content: string }[];
   example: string;
-  practicalApplication: string; // NEW: Why does this matter?
-  commonMisconceptions: string[]; // NEW: Where do students get stuck?
+  practicalApplication: string;
+  commonMisconceptions: string[];
   summary: string;
+  // Visual Learner Field
+  visualImagePrompt?: string;
+  cachedImageUrl?: string; // Base64 or static URL for offline mode 
   interactiveElement?: {
-    type: 'quiz';
+    type: InteractiveElementType;
     question: string;
-    options: string[];
-    correctAnswer: number;
+    // For Quiz
+    options?: string[];
+    correctAnswer?: number; // Index
+    // For Fill in the Blank
+    correctAnswerText?: string; // String match
     explanation: string;
   };
+  isFallback?: boolean;
 }
 
 export interface Submission {

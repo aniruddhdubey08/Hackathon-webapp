@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Brain, LayoutDashboard, GraduationCap, Trophy, Settings, Loader2, Play, BookOpen, LogOut, Sparkles, Zap, Skull, Clock, CheckCircle, Swords, AlertTriangle, Lock, ArrowRight, RotateCcw, Menu, X, Sun, Moon } from 'lucide-react';
+import { Brain, LayoutDashboard, GraduationCap, Trophy, Settings, Loader2, Play, BookOpen, LogOut, Sparkles, Zap, Skull, Clock, CheckCircle, Swords, AlertTriangle, Lock, ArrowRight, RotateCcw, Menu, X, Sun, Moon, Wifi, WifiOff } from 'lucide-react';
 
 // Components
 import { Leaderboard } from './components/Leaderboard';
@@ -18,7 +18,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 
 // Services & Types
-import { generateQuizQuestions, getLearningRecommendation } from './services/geminiService';
+import { generateQuizQuestions, getLearningRecommendation, setOfflineMode, getOfflineModeStatus } from './services/geminiService';
 import { Question, UserStats, Badge, Subject, UserRole, GameMode, KnowledgeLevel, Assignment, LearningStyle } from './types';
 import { db } from './services/db';
 
@@ -117,8 +117,9 @@ function App() {
   const [authRole, setAuthRole] = useState<UserRole>('student');
   const [pendingVerifyEmail, setPendingVerifyEmail] = useState('');
   
-  // Theme State
+  // Theme & Network State
   const [darkMode, setDarkMode] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
   
   // UI State
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -147,6 +148,13 @@ function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Sync Offline State
+  const toggleOffline = () => {
+      const newState = !isOffline;
+      setIsOffline(newState);
+      setOfflineMode(newState);
+  };
 
   // Check for existing session
   useEffect(() => {
@@ -300,6 +308,14 @@ function App() {
   const navigateTo = (view: View) => {
     setCurrentView(view);
     setMobileMenuOpen(false);
+  };
+  
+  const handleLogoClick = () => {
+    if (userStats.role === 'teacher') {
+      navigateTo(View.TEACHER_DASHBOARD);
+    } else {
+      navigateTo(View.DASHBOARD);
+    }
   };
 
   // App Logic Handlers
@@ -526,7 +542,7 @@ function App() {
   const isRoadmapQuiz = !!currentRoadmapId && !!selectedSubject;
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900 relative transition-colors duration-300">
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 relative transition-colors duration-300 overflow-hidden">
       {/* Mobile Backdrop */}
       {mobileMenuOpen && (
         <div 
@@ -537,17 +553,20 @@ function App() {
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:block
+        fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:block flex-shrink-0
         ${mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
       `}>
-        <div className="p-6 h-full flex flex-col">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-2">
-              <div className="bg-indigo-600 p-2 rounded-lg">
+        <div className="p-6 h-full flex flex-col overflow-y-auto custom-scrollbar">
+          <div className="flex items-center justify-between mb-8 shrink-0">
+            <button 
+              onClick={handleLogoClick}
+              className="flex items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div className="bg-indigo-600 p-2 rounded-lg group-hover:scale-105 transition-transform">
                 <Brain className="text-white" size={24} />
               </div>
               <span className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">MindQuest</span>
-            </div>
+            </button>
             <button 
               onClick={() => setMobileMenuOpen(false)}
               className="md:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
@@ -611,7 +630,16 @@ function App() {
             />
           </nav>
 
-          <div className="pt-6 border-t border-slate-100 dark:border-slate-700 mt-auto space-y-4">
+          <div className="pt-6 border-t border-slate-100 dark:border-slate-700 mt-auto space-y-4 shrink-0">
+             {/* Offline Toggle */}
+             <button
+               onClick={toggleOffline}
+               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isOffline ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold shadow-inner' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'}`}
+             >
+                {isOffline ? <WifiOff size={20} /> : <Wifi size={20} />}
+                <span className="text-sm">{isOffline ? 'Offline Mode' : 'Online Mode'}</span>
+             </button>
+
              {/* Dark Mode Toggle */}
              <button
                onClick={() => setDarkMode(!darkMode)}
@@ -648,379 +676,381 @@ function App() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-6 lg:p-10 max-w-7xl mx-auto w-full min-w-0">
-        {/* Mobile Header */}
-        <div className="md:hidden flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
-             <button 
-                onClick={() => setMobileMenuOpen(true)}
-                className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg -ml-2"
-             >
-                <Menu size={24} />
-             </button>
-             <div className="flex items-center gap-2">
-                <div className="bg-indigo-600 p-1.5 rounded-lg">
-                   <Brain className="text-white" size={18} />
-                </div>
-                <span className="text-lg font-bold text-slate-800 dark:text-white">MindQuest</span>
-             </div>
-          </div>
-          <button 
-            onClick={() => navigateTo(View.SETTINGS)}
-            className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
-          >
-            <Settings size={24} />
-          </button>
-        </div>
-
-        {/* View Routing */}
-        {currentView === View.DASHBOARD && (
-          <Dashboard 
-            userStats={userStats} 
-            subjectPerformanceData={subjectPerformanceData} 
-            badges={badges} 
-            onStartQuiz={() => setCurrentView(View.QUIZ_SETUP)}
-            onGoToClasses={() => setCurrentView(View.LEARN)}
-            onTakeAssignment={handleAssignmentStart}
-            COLORS={COLORS}
-          />
-        )}
-        
-        {currentView === View.TEACHER_DASHBOARD && (
-          <TeacherDashboard userStats={userStats} />
-        )}
-        
-        {currentView === View.LEARN && (
-          <LearnPage 
-            subjects={subjects}
-            userStats={userStats}
-            onStartLearning={(subject) => {
-              setSelectedSubject(subject);
-              setCurrentView(View.STUDY_SESSION);
-            }}
-            onJoinClassWithAssessment={handleJoinClassWithAssessment}
-            onUserUpdate={() => {
-               const freshUser = db.getCurrentUser();
-               if (freshUser) setUserStats(freshUser);
-            }}
-            onTakeAssignment={handleAssignmentStart}
-          />
-        )}
-        
-        {currentView === View.STUDY_SESSION && selectedSubject && (
-          <StudySessionPage 
-            selectedSubject={selectedSubject}
-            isJoined={userStats.joinedClasses.includes(selectedSubject.id)}
-            completedTopicIds={userStats.completedTopicIds[selectedSubject.id] || []}
-            userStats={userStats} // Pass userStats to use knowledge level
-            onJoin={() => handleJoinClassWithAssessment(selectedSubject.id, 'Beginner', 'Master Basics')} // Fallback simple join
-            onTakeQuiz={(topic, context, roadmapId) => {
-               setQuizTopic(topic);
-               setQuizContext(context || '');
-               setCurrentRoadmapId(roadmapId || null);
-               setCurrentView(View.QUIZ_SETUP);
-            }}
-            onBack={() => setCurrentView(View.LEARN)}
-          />
-        )}
-        
-        {currentView === View.LEADERBOARD && (
-           <div className="animate-in fade-in duration-500 pt-8">
-               <Leaderboard />
-           </div>
-        )}
-
-        {currentView === View.SETTINGS && (
-           <SettingsPage 
-             userStats={userStats}
-             onSave={handleUpdateProfile}
-             onBack={() => setCurrentView(View.DASHBOARD)}
-           />
-        )}
-
-        {currentView === View.QUIZ_SETUP && (
-          <div className="max-w-xl mx-auto mt-10 animate-in fade-in duration-500">
-            <button 
-              onClick={() => setCurrentView(View.DASHBOARD)}
-              className="mb-6 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 font-medium text-sm transition-colors"
-            >
-              &larr; Back to Dashboard
-            </button>
-            <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl shadow-slate-200 dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-700">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Sparkles size={32} />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Create Challenge</h2>
-                <p className="text-slate-500 dark:text-slate-400 mt-2">Customize your learning experience.</p>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Topic / Subject</label>
-                  <input 
-                    type="text" 
-                    value={quizTopic}
-                    onChange={(e) => {
-                      setQuizTopic(e.target.value);
-                      setQuizContext(''); // Clear context if manually editing
-                      setCurrentRoadmapId(null);
-                    }}
-                    placeholder="e.g. Ancient Rome, Calculus, Javascript"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-all outline-none placeholder:text-slate-400"
-                  />
-                  {quizContext && (
-                     <div className="mt-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-lg">
-                       <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                          <CheckCircle size={14} /> Official Chapter Quiz
-                       </p>
-                       <p className="text-xs text-emerald-600/80 dark:text-emerald-500/80 mt-1">Passing this quiz with &gt;70% accuracy will unlock the next chapter.</p>
-                     </div>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Difficulty</label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {['Easy', 'Medium', 'Hard'].map((diff) => (
-                      <button
-                        key={diff}
-                        onClick={() => setQuizDifficulty(diff)}
-                        className={`py-2 rounded-lg text-sm font-medium transition-all ${
-                          quizDifficulty === diff 
-                            ? 'bg-indigo-600 text-white shadow-md' 
-                            : 'bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-600'
-                        }`}
-                      >
-                        {diff}
-                      </button>
-                    ))}
+      {/* Main Content Area Wrapper */}
+      <div className="flex-1 overflow-y-auto h-full focus:outline-none">
+        <main className="p-6 lg:p-10 max-w-7xl mx-auto w-full min-w-0">
+          {/* Mobile Header */}
+          <div className="md:hidden flex justify-between items-center mb-6">
+            <div className="flex items-center gap-3">
+              <button 
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg -ml-2"
+              >
+                  <Menu size={24} />
+              </button>
+              <button onClick={handleLogoClick} className="flex items-center gap-2">
+                  <div className="bg-indigo-600 p-1.5 rounded-lg">
+                    <Brain className="text-white" size={18} />
                   </div>
+                  <span className="text-lg font-bold text-slate-800 dark:text-white">MindQuest</span>
+              </button>
+            </div>
+            <button 
+              onClick={() => navigateTo(View.SETTINGS)}
+              className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+            >
+              <Settings size={24} />
+            </button>
+          </div>
+
+          {/* View Routing */}
+          {currentView === View.DASHBOARD && (
+            <Dashboard 
+              userStats={userStats} 
+              subjectPerformanceData={subjectPerformanceData} 
+              badges={badges} 
+              onStartQuiz={() => setCurrentView(View.QUIZ_SETUP)}
+              onGoToClasses={() => setCurrentView(View.LEARN)}
+              onTakeAssignment={handleAssignmentStart}
+              COLORS={COLORS}
+            />
+          )}
+          
+          {currentView === View.TEACHER_DASHBOARD && (
+            <TeacherDashboard userStats={userStats} />
+          )}
+          
+          {currentView === View.LEARN && (
+            <LearnPage 
+              subjects={subjects}
+              userStats={userStats}
+              onStartLearning={(subject) => {
+                setSelectedSubject(subject);
+                setCurrentView(View.STUDY_SESSION);
+              }}
+              onJoinClassWithAssessment={handleJoinClassWithAssessment}
+              onUserUpdate={() => {
+                const freshUser = db.getCurrentUser();
+                if (freshUser) setUserStats(freshUser);
+              }}
+              onTakeAssignment={handleAssignmentStart}
+            />
+          )}
+          
+          {currentView === View.STUDY_SESSION && selectedSubject && (
+            <StudySessionPage 
+              selectedSubject={selectedSubject}
+              isJoined={userStats.joinedClasses.includes(selectedSubject.id)}
+              completedTopicIds={userStats.completedTopicIds[selectedSubject.id] || []}
+              userStats={userStats} // Pass userStats to use knowledge level
+              onJoin={() => handleJoinClassWithAssessment(selectedSubject.id, 'Beginner', 'Master Basics')} // Fallback simple join
+              onTakeQuiz={(topic, context, roadmapId) => {
+                setQuizTopic(topic);
+                setQuizContext(context || '');
+                setCurrentRoadmapId(roadmapId || null);
+                setCurrentView(View.QUIZ_SETUP);
+              }}
+              onBack={() => setCurrentView(View.LEARN)}
+            />
+          )}
+          
+          {currentView === View.LEADERBOARD && (
+            <div className="animate-in fade-in duration-500 pt-8">
+                <Leaderboard />
+            </div>
+          )}
+
+          {currentView === View.SETTINGS && (
+            <SettingsPage 
+              userStats={userStats}
+              onSave={handleUpdateProfile}
+              onBack={() => setCurrentView(View.DASHBOARD)}
+            />
+          )}
+
+          {currentView === View.QUIZ_SETUP && (
+            <div className="max-w-xl mx-auto mt-10 animate-in fade-in duration-500">
+              <button 
+                onClick={() => setCurrentView(View.DASHBOARD)}
+                className="mb-6 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 font-medium text-sm transition-colors"
+              >
+                &larr; Back to Dashboard
+              </button>
+              <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl shadow-slate-200 dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-700">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Sparkles size={32} />
+                  </div>
+                  <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Create Challenge</h2>
+                  <p className="text-slate-500 dark:text-slate-400 mt-2">Customize your learning experience.</p>
                 </div>
 
-                <div>
-                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Game Mode</label>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <button
-                        onClick={() => setGameMode('Classic')}
-                        className={`p-3 rounded-xl border-2 text-left transition-all ${
-                           gameMode === 'Classic' 
-                           ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' 
-                           : 'border-slate-200 dark:border-slate-700 hover:border-indigo-300'
-                        }`}
-                      >
-                         <div className="text-indigo-600 dark:text-indigo-400 mb-1"><Play size={20} /></div>
-                         <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Classic</div>
-                         <div className="text-xs text-slate-500 dark:text-slate-400">Standard 5 questions</div>
-                      </button>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Topic / Subject</label>
+                    <input 
+                      type="text" 
+                      value={quizTopic}
+                      onChange={(e) => {
+                        setQuizTopic(e.target.value);
+                        setQuizContext(''); // Clear context if manually editing
+                        setCurrentRoadmapId(null);
+                      }}
+                      placeholder="e.g. Ancient Rome, Calculus, Javascript"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-all outline-none placeholder:text-slate-400"
+                    />
+                    {quizContext && (
+                      <div className="mt-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-lg">
+                        <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                            <CheckCircle size={14} /> Official MicroSkill Quiz
+                        </p>
+                        <p className="text-xs text-emerald-600/80 dark:text-emerald-500/80 mt-1">Passing this quiz with &gt;70% accuracy will unlock the next skill.</p>
+                      </div>
+                    )}
+                  </div>
 
-                      <button
-                        onClick={() => setGameMode('Time Attack')}
-                        className={`p-3 rounded-xl border-2 text-left transition-all ${
-                           gameMode === 'Time Attack' 
-                           ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20' 
-                           : 'border-slate-200 dark:border-slate-700 hover:border-amber-300'
-                        }`}
-                      >
-                         <div className="text-amber-600 dark:text-amber-400 mb-1"><Clock size={20} /></div>
-                         <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Time Attack</div>
-                         <div className="text-xs text-slate-500 dark:text-slate-400">60s Speed Run</div>
-                      </button>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Difficulty</label>
+                    <div className="grid grid-cols-3 gap-3">
+                      {['Easy', 'Medium', 'Hard'].map((diff) => (
+                        <button
+                          key={diff}
+                          onClick={() => setQuizDifficulty(diff)}
+                          className={`py-2 rounded-lg text-sm font-medium transition-all ${
+                            quizDifficulty === diff 
+                              ? 'bg-indigo-600 text-white shadow-md' 
+                              : 'bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-600'
+                          }`}
+                        >
+                          {diff}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-                      <button
-                        onClick={() => setGameMode('Sudden Death')}
-                        className={`p-3 rounded-xl border-2 text-left transition-all ${
-                           gameMode === 'Sudden Death' 
-                           ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20' 
-                           : 'border-slate-200 dark:border-slate-700 hover:border-rose-300'
-                        }`}
-                      >
-                         <div className="text-rose-600 dark:text-rose-400 mb-1"><Skull size={20} /></div>
-                         <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Sudden Death</div>
-                         <div className="text-xs text-slate-500 dark:text-slate-400">One mistake & out</div>
-                      </button>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Game Mode</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button
+                          onClick={() => setGameMode('Classic')}
+                          className={`p-3 rounded-xl border-2 text-left transition-all ${
+                            gameMode === 'Classic' 
+                            ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' 
+                            : 'border-slate-200 dark:border-slate-700 hover:border-indigo-300'
+                          }`}
+                        >
+                          <div className="text-indigo-600 dark:text-indigo-400 mb-1"><Play size={20} /></div>
+                          <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Classic</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400">Standard 5 questions</div>
+                        </button>
 
-                      <button
-                        onClick={() => setGameMode('1v1 Battle')}
-                        className={`p-3 rounded-xl border-2 text-left transition-all ${
-                           gameMode === '1v1 Battle' 
-                           ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20' 
-                           : 'border-slate-200 dark:border-slate-700 hover:border-violet-300'
-                        }`}
-                      >
-                         <div className="text-violet-600 dark:text-violet-400 mb-1"><Swords size={20} /></div>
-                         <div className="font-bold text-sm text-slate-800 dark:text-slate-200">1v1 Battle</div>
-                         <div className="text-xs text-slate-500 dark:text-slate-400">Beat the rival!</div>
-                      </button>
-                   </div>
+                        <button
+                          onClick={() => setGameMode('Time Attack')}
+                          className={`p-3 rounded-xl border-2 text-left transition-all ${
+                            gameMode === 'Time Attack' 
+                            ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20' 
+                            : 'border-slate-200 dark:border-slate-700 hover:border-amber-300'
+                          }`}
+                        >
+                          <div className="text-amber-600 dark:text-amber-400 mb-1"><Clock size={20} /></div>
+                          <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Time Attack</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400">60s Speed Run</div>
+                        </button>
+
+                        <button
+                          onClick={() => setGameMode('Sudden Death')}
+                          className={`p-3 rounded-xl border-2 text-left transition-all ${
+                            gameMode === 'Sudden Death' 
+                            ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20' 
+                            : 'border-slate-200 dark:border-slate-700 hover:border-rose-300'
+                          }`}
+                        >
+                          <div className="text-rose-600 dark:text-rose-400 mb-1"><Skull size={20} /></div>
+                          <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Sudden Death</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400">One mistake & out</div>
+                        </button>
+
+                        <button
+                          onClick={() => setGameMode('1v1 Battle')}
+                          className={`p-3 rounded-xl border-2 text-left transition-all ${
+                            gameMode === '1v1 Battle' 
+                            ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20' 
+                            : 'border-slate-200 dark:border-slate-700 hover:border-violet-300'
+                          }`}
+                        >
+                          <div className="text-violet-600 dark:text-violet-400 mb-1"><Swords size={20} /></div>
+                          <div className="font-bold text-sm text-slate-800 dark:text-slate-200">1v1 Battle</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400">Beat the rival!</div>
+                        </button>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={handleStartQuiz}
+                    disabled={loading || !quizTopic}
+                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex justify-center items-center gap-2"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="animate-spin" /> Generating...
+                      </>
+                    ) : (
+                      <>
+                        Start Challenge <Play size={20} fill="currentColor" />
+                      </>
+                    )}
+                  </button>
                 </div>
-
-                <button 
-                  onClick={handleStartQuiz}
-                  disabled={loading || !quizTopic}
-                  className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex justify-center items-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="animate-spin" /> Generating...
-                    </>
-                  ) : (
-                    <>
-                      Start Challenge <Play size={20} fill="currentColor" />
-                    </>
-                  )}
-                </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {currentView === View.QUIZ_ACTIVE && (
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
-            <Quiz 
-              questions={questions}
-              topic={quizTopic}
-              gameMode={gameMode}
-              onComplete={handleQuizComplete}
-              onCancel={() => setCurrentView(View.DASHBOARD)}
-            />
-          </div>
-        )}
+          {currentView === View.QUIZ_ACTIVE && (
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
+              <Quiz 
+                questions={questions}
+                topic={quizTopic}
+                gameMode={gameMode}
+                onComplete={handleQuizComplete}
+                onCancel={() => setCurrentView(View.DASHBOARD)}
+              />
+            </div>
+          )}
 
-        {currentView === View.QUIZ_RESULT && lastScore && (
-          <div className="max-w-2xl mx-auto mt-10 animate-in zoom-in duration-300">
-             <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-100 dark:shadow-slate-900 border border-slate-100 dark:border-slate-700">
-               <div className="bg-slate-900 dark:bg-slate-950 text-white p-10 text-center relative overflow-hidden">
-                 <div className="relative z-10">
-                   {quizResultStatus === 'fail' ? (
-                     <>
-                        <div className="flex justify-center mb-4">
-                           <div className="bg-rose-500/20 p-4 rounded-full border border-rose-500/50 text-rose-400">
-                              <AlertTriangle size={48} />
-                           </div>
-                        </div>
-                        <h2 className="text-3xl font-bold mb-2">Chapter Locked</h2>
-                        <p className="text-rose-200 max-w-md mx-auto">
-                           You need at least <strong>70% accuracy</strong> to advance to the next chapter. 
-                           Review the material and try again!
-                        </p>
-                     </>
-                   ) : quizResultStatus === 'pass' ? (
-                     <>
-                        <div className="flex justify-center mb-4">
-                           <div className="bg-emerald-500/20 p-4 rounded-full border border-emerald-500/50 text-emerald-400">
-                              <CheckCircle size={48} />
-                           </div>
-                        </div>
-                        <h2 className="text-3xl font-bold mb-2">Chapter Complete!</h2>
-                        <p className="text-emerald-200">Excellent work! You've unlocked the next topic.</p>
-                     </>
-                   ) : (
-                     <>
-                        <h2 className="text-3xl font-bold mb-2">Quiz Complete!</h2>
-                        <p className="text-slate-400">Here is how you performed on "{quizTopic}"</p>
-                     </>
-                   )}
-                   
-                   <div className="mt-8 flex justify-center items-center gap-6">
-                     <div className="text-center">
-                       <div className={`text-5xl font-black mb-1 ${quizResultStatus === 'fail' ? 'text-rose-400' : 'text-emerald-400'}`}>
-                          {Math.round((lastScore.score / lastScore.total) * 100)}%
-                       </div>
-                       <div className="text-xs uppercase tracking-widest font-bold text-slate-500">Accuracy</div>
-                     </div>
-                     <div className="w-px h-16 bg-slate-700"></div>
-                     <div className="text-center">
-                        <div className="text-5xl font-black text-amber-400 mb-1">
-                          +{Math.floor((lastScore.score * 100) * (
-                            gameMode === 'Sudden Death' ? 1.5 : 
-                            gameMode === 'Time Attack' ? 1.2 : 
-                            gameMode === '1v1 Battle' ? 1.3 : 1
-                          ))}
-                        </div>
-                        <div className="text-xs uppercase tracking-widest font-bold text-slate-500">XP Earned</div>
-                     </div>
-                   </div>
-                 </div>
-                 {/* Decorative circles */}
-                 <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"></div>
-                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-violet-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-x-1/2 translate-y-1/2"></div>
-               </div>
-
-               <div className="p-8">
-                 {/* Recommendation Card */}
-                 <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-2xl p-6 mb-8 flex gap-4 items-start">
-                    <div className="bg-white dark:bg-indigo-900 p-2 rounded-full shadow-sm text-indigo-600 dark:text-indigo-300 shrink-0">
-                      <Sparkles size={24} />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-indigo-900 dark:text-indigo-300 mb-1">AI Tutor Feedback</h3>
-                      {loading ? (
-                        <div className="flex items-center gap-2 text-indigo-600/70 dark:text-indigo-400/70 text-sm">
-                          <Loader2 size={14} className="animate-spin" /> Analyzing performance...
-                        </div>
-                      ) : (
-                        <p className="text-indigo-800 dark:text-indigo-200 leading-relaxed text-sm">
-                          {recommendation}
-                        </p>
-                      )}
-                    </div>
-                 </div>
-
-                 {/* Action Buttons */}
-                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <button 
-                      onClick={() => setCurrentView(View.DASHBOARD)}
-                      className="py-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition-colors"
-                    >
-                      Back to Home
-                    </button>
-
+          {currentView === View.QUIZ_RESULT && lastScore && (
+            <div className="max-w-2xl mx-auto mt-10 animate-in zoom-in duration-300">
+              <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-100 dark:shadow-slate-900 border border-slate-100 dark:border-slate-700">
+                <div className="bg-slate-900 dark:bg-slate-950 text-white p-10 text-center relative overflow-hidden">
+                  <div className="relative z-10">
                     {quizResultStatus === 'fail' ? (
-                       <button 
-                         onClick={handleStartQuiz}
-                         disabled={loading}
-                         className="py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-rose-200 dark:shadow-none flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                       >
-                         {loading ? <Loader2 className="animate-spin" size={20} /> : <RotateCcw size={20} />}
-                         {loading ? 'Generating...' : 'Retry Quiz'}
-                       </button>
-                    ) : isRoadmapQuiz ? (
-                        <button 
-                          onClick={() => setCurrentView(View.STUDY_SESSION)}
-                          className="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-indigo-200 dark:shadow-none flex justify-center items-center gap-2"
-                        >
-                           Next Topic <ArrowRight size={20} />
-                        </button>
+                      <>
+                          <div className="flex justify-center mb-4">
+                            <div className="bg-rose-500/20 p-4 rounded-full border border-rose-500/50 text-rose-400">
+                                <AlertTriangle size={48} />
+                            </div>
+                          </div>
+                          <h2 className="text-3xl font-bold mb-2">MicroSkill Locked</h2>
+                          <p className="text-rose-200 max-w-md mx-auto">
+                            You need at least <strong>70% accuracy</strong> to advance to the next MicroSkill. 
+                            Review the material and try again!
+                          </p>
+                      </>
+                    ) : quizResultStatus === 'pass' ? (
+                      <>
+                          <div className="flex justify-center mb-4">
+                            <div className="bg-emerald-500/20 p-4 rounded-full border border-emerald-500/50 text-emerald-400">
+                                <CheckCircle size={48} />
+                            </div>
+                          </div>
+                          <h2 className="text-3xl font-bold mb-2">MicroSkill Completed!</h2>
+                          <p className="text-emerald-200">Excellent work! You've mastered this concept and unlocked the next MicroSkill.</p>
+                      </>
                     ) : (
-                       <button 
-                         onClick={() => setCurrentView(View.QUIZ_SETUP)}
-                         className="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-indigo-200 dark:shadow-none"
-                       >
-                         New Quiz
-                       </button>
+                      <>
+                          <h2 className="text-3xl font-bold mb-2">Quiz Complete!</h2>
+                          <p className="text-slate-400">Here is how you performed on "{quizTopic}"</p>
+                      </>
                     )}
-                 </div>
-                 
-                 {/* Practice Again for Passed Users */}
-                 {(quizResultStatus === 'pass' || quizResultStatus === 'neutral') && (
-                    <div className="mt-4">
-                       <button 
-                         onClick={handleStartQuiz}
-                         disabled={loading}
-                         className="w-full py-3 bg-white dark:bg-slate-700 border-2 border-indigo-100 dark:border-indigo-900 text-indigo-600 dark:text-indigo-300 font-bold rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/50 transition-colors flex justify-center items-center gap-2"
-                       >
-                          {loading ? <Loader2 className="animate-spin" size={18} /> : <Play size={18} />}
-                          Practice This Topic Again
-                       </button>
+                    
+                    <div className="mt-8 flex justify-center items-center gap-6">
+                      <div className="text-center">
+                        <div className={`text-5xl font-black mb-1 ${quizResultStatus === 'fail' ? 'text-rose-400' : 'text-emerald-400'}`}>
+                            {Math.round((lastScore.score / lastScore.total) * 100)}%
+                        </div>
+                        <div className="text-xs uppercase tracking-widest font-bold text-slate-500">Accuracy</div>
+                      </div>
+                      <div className="w-px h-16 bg-slate-700"></div>
+                      <div className="text-center">
+                          <div className="text-5xl font-black text-amber-400 mb-1">
+                            +{Math.floor((lastScore.score * 100) * (
+                              gameMode === 'Sudden Death' ? 1.5 : 
+                              gameMode === 'Time Attack' ? 1.2 : 
+                              gameMode === '1v1 Battle' ? 1.3 : 1
+                            ))}
+                          </div>
+                          <div className="text-xs uppercase tracking-widest font-bold text-slate-500">XP Earned</div>
+                      </div>
                     </div>
-                 )}
-               </div>
-             </div>
-          </div>
-        )}
-      </main>
+                  </div>
+                  {/* Decorative circles */}
+                  <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"></div>
+                  <div className="absolute bottom-0 right-0 w-64 h-64 bg-violet-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-x-1/2 translate-y-1/2"></div>
+                </div>
+
+                <div className="p-8">
+                  {/* Recommendation Card */}
+                  <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-2xl p-6 mb-8 flex gap-4 items-start">
+                      <div className="bg-white dark:bg-indigo-900 p-2 rounded-full shadow-sm text-indigo-600 dark:text-indigo-300 shrink-0">
+                        <Sparkles size={24} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-indigo-900 dark:text-indigo-300 mb-1">AI Tutor Feedback</h3>
+                        {loading ? (
+                          <div className="flex items-center gap-2 text-indigo-600/70 dark:text-indigo-400/70 text-sm">
+                            <Loader2 size={14} className="animate-spin" /> Analyzing performance...
+                          </div>
+                        ) : (
+                          <p className="text-indigo-800 dark:text-indigo-200 leading-relaxed text-sm">
+                            {recommendation}
+                          </p>
+                        )}
+                      </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <button 
+                        onClick={() => setCurrentView(View.DASHBOARD)}
+                        className="py-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition-colors"
+                      >
+                        Back to Home
+                      </button>
+
+                      {quizResultStatus === 'fail' ? (
+                        <button 
+                          onClick={handleStartQuiz}
+                          disabled={loading}
+                          className="py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-rose-200 dark:shadow-none flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                          {loading ? <Loader2 className="animate-spin" size={20} /> : <RotateCcw size={20} />}
+                          {loading ? 'Generating...' : 'Retry Quiz'}
+                        </button>
+                      ) : isRoadmapQuiz ? (
+                          <button 
+                            onClick={() => setCurrentView(View.STUDY_SESSION)}
+                            className="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-indigo-200 dark:shadow-none flex justify-center items-center gap-2"
+                          >
+                            Next MicroSkill <ArrowRight size={20} />
+                          </button>
+                      ) : (
+                        <button 
+                          onClick={() => setCurrentView(View.QUIZ_SETUP)}
+                          className="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-indigo-200 dark:shadow-none"
+                        >
+                          New Quiz
+                        </button>
+                      )}
+                  </div>
+                  
+                  {/* Practice Again for Passed Users */}
+                  {(quizResultStatus === 'pass' || quizResultStatus === 'neutral') && (
+                      <div className="mt-4">
+                        <button 
+                          onClick={handleStartQuiz}
+                          disabled={loading}
+                          className="w-full py-3 bg-white dark:bg-slate-700 border-2 border-indigo-100 dark:border-indigo-900 text-indigo-600 dark:text-indigo-300 font-bold rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/50 transition-colors flex justify-center items-center gap-2"
+                        >
+                            {loading ? <Loader2 className="animate-spin" size={18} /> : <Play size={18} />}
+                            Practice This Topic Again
+                        </button>
+                      </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

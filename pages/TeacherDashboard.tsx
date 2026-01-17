@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { GraduationCap, Sparkles, Plus, Calendar, Users, X, FileText, Copy, Check, School, Layers, BookOpen, User, Upload, Download, Eye, Clock, ArrowLeft } from 'lucide-react';
+import { GraduationCap, Sparkles, Plus, Calendar, Users, X, FileText, Copy, Check, School, Layers, BookOpen, User, Upload, Download, Eye, Clock, ArrowLeft, MoreVertical, Settings } from 'lucide-react';
 import { UserStats, Assignment, Classroom } from '../types';
 import { db } from '../services/db';
 
@@ -8,7 +8,7 @@ interface TeacherDashboardProps {
   userStats: UserStats;
 }
 
-type Tab = 'overview' | 'classrooms';
+type Tab = 'overview' | 'classrooms' | 'assignments';
 
 export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ userStats }) => {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
@@ -146,202 +146,267 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ userStats })
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 relative pb-12">
-      {/* Header */}
-      <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
-         <div>
-             <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Hello, {userStats.name}!</h2>
-             <p className="text-slate-500 dark:text-slate-400">Manage your classrooms, generate codes, and track student progress.</p>
+    <div className="space-y-8 animate-in fade-in duration-500 relative pb-12">
+      {/* Teacher Header Banner */}
+      <div className="bg-gradient-to-r from-indigo-900 to-indigo-700 rounded-3xl p-8 text-white shadow-xl shadow-indigo-200 dark:shadow-none relative overflow-hidden group">
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+                <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-sm">Teacher Mode</span>
+            </div>
+            <h1 className="text-3xl font-bold mb-2">Welcome, {userStats.name}</h1>
+            <p className="text-indigo-100 max-w-lg">Manage your digital classroom, track student progress, and distribute AI-powered assignments.</p>
+          </div>
+          
+          <div className="flex gap-3">
+             <button 
+                onClick={() => setShowCreateClassModal(true)}
+                className="bg-white text-indigo-900 px-5 py-3 rounded-xl font-bold shadow-lg hover:bg-indigo-50 transition-all flex items-center gap-2 active:scale-95"
+              >
+                <Plus size={20} />
+                Create Class
+              </button>
+              <button 
+                onClick={() => setShowAssignModal(true)}
+                className="bg-indigo-600 border border-indigo-400 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2 active:scale-95"
+              >
+                <FileText size={20} />
+                Assign Quiz
+              </button>
+          </div>
+        </div>
+        
+        {/* Decorative Background */}
+        <div className="absolute right-[-20px] top-[-40px] opacity-10 rotate-12">
+          <GraduationCap size={300} />
+        </div>
+      </div>
+
+      {/* Stats Overview Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl">
+               <Users size={24} />
+            </div>
+            <div>
+               <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Students</p>
+               <h3 className="text-2xl font-black text-slate-800 dark:text-white">
+                  {classrooms.reduce((acc, c) => acc + c.studentIds.length, 0)}
+               </h3>
+            </div>
          </div>
-         <div className="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-xl">
-             <button 
-                onClick={() => setActiveTab('overview')}
-                className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === 'overview' ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-indigo-300 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
-             >
-                Overview
-             </button>
-             <button 
-                onClick={() => setActiveTab('classrooms')}
-                className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === 'classrooms' ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-indigo-300 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
-             >
-                My Classrooms
-             </button>
+
+         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
+            <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl">
+               <School size={24} />
+            </div>
+            <div>
+               <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Active Classes</p>
+               <h3 className="text-2xl font-black text-slate-800 dark:text-white">{classrooms.length}</h3>
+            </div>
+         </div>
+
+         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
+            <div className="p-4 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-xl">
+               <Layers size={24} />
+            </div>
+            <div>
+               <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pending Assignments</p>
+               <h3 className="text-2xl font-black text-slate-800 dark:text-white">{assignments.length}</h3>
+            </div>
          </div>
       </div>
 
-      {activeTab === 'overview' && (
-        <>
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Classroom Analytics</h2>
-                <button 
-                    onClick={() => setShowAssignModal(true)}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 flex items-center gap-2 shadow-lg shadow-indigo-200 dark:shadow-none transition-all"
-                >
-                    <Plus size={16} /> Assign Quiz
-                </button>
-            </div>
+      {/* Main Content Area */}
+      <div className="space-y-6">
+         {/* Navigation Tabs */}
+         <div className="flex border-b border-slate-200 dark:border-slate-700">
+             <button 
+               onClick={() => setActiveTab('overview')}
+               className={`px-6 py-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'overview' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+             >
+               Recent Activity
+             </button>
+             <button 
+               onClick={() => setActiveTab('classrooms')}
+               className={`px-6 py-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'classrooms' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+             >
+               My Classrooms
+             </button>
+             <button 
+               onClick={() => setActiveTab('assignments')}
+               className={`px-6 py-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'assignments' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+             >
+               All Assignments
+             </button>
+         </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Students</p>
-                        <h3 className="text-3xl font-bold text-slate-800 dark:text-white mt-1">
-                            {classrooms.reduce((acc, c) => acc + c.studentIds.length, 0)}
-                        </h3>
-                        </div>
-                        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg"><Users size={20} /></div>
-                    </div>
+         {/* Content: Overview & Assignments Table */}
+         {(activeTab === 'overview' || activeTab === 'assignments') && (
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                   <h3 className="font-bold text-slate-800 dark:text-white text-lg flex items-center gap-2">
+                      <FileText className="text-indigo-500" size={20} /> 
+                      {activeTab === 'overview' ? 'Recent Assignments' : 'Assignment History'}
+                   </h3>
                 </div>
-
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Assignments</p>
-                        <h3 className="text-3xl font-bold text-slate-800 dark:text-white mt-1">{assignments.length}</h3>
-                        </div>
-                        <div className="p-2 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-lg"><FileText size={20} /></div>
-                    </div>
-                </div>
-
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Classes</p>
-                        <h3 className="text-3xl font-bold text-slate-800 dark:text-white mt-1">{classrooms.length}</h3>
-                        </div>
-                        <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg"><School size={20} /></div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Recent Assignments List */}
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mt-8 transition-colors">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                        <FileText className="text-indigo-500" size={20} /> Recent Assignments
-                    </h3>
-                </div>
-
-                <div className="space-y-3">
+                
                 {assignments.length === 0 ? (
-                    <div className="text-center py-8 text-slate-400 dark:text-slate-500 text-sm border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-xl">
-                        No active assignments. Create a class then assign a quiz!
+                    <div className="text-center py-16">
+                        <div className="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400 dark:text-slate-500">
+                             <FileText size={32} />
+                        </div>
+                        <h4 className="font-bold text-slate-700 dark:text-slate-300">No assignments created</h4>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 mb-4">Get started by assigning a quiz to your class.</p>
+                        <button 
+                            onClick={() => setShowAssignModal(true)}
+                            className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 rounded-lg text-sm font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+                        >
+                            Create First Assignment
+                        </button>
                     </div>
                 ) : (
-                    assignments.map(assign => (
-                    <div key={assign.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-indigo-100 dark:hover:border-indigo-800 bg-slate-50/50 dark:bg-slate-700/20 transition-colors gap-4">
-                        <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 shrink-0 rounded-lg flex items-center justify-center text-white font-bold
-                                ${assign.difficulty === 'Easy' ? 'bg-emerald-500' : assign.difficulty === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'}
-                            `}>
-                                {assign.difficulty[0]}
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-slate-800 dark:text-white">{assign.topic}</h4>
-                                <div className="flex gap-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                    <span className="flex items-center gap-1"><School size={12} /> {assign.className}</span>
-                                    <span className="flex items-center gap-1"><Calendar size={12} /> Due: {new Date(assign.dueDate).toLocaleDateString()}</span>
-                                    {assign.attachmentUrl && <span className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded"><FileText size={12} /> PDF Attached</span>}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-3 sm:justify-end">
-                            <button 
-                                onClick={() => handleViewSubmissions(assign)}
-                                className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-lg hover:border-indigo-500 dark:hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-2 shadow-sm"
-                            >
-                                <Eye size={14} /> View Submissions ({assign.submissions?.length || 0})
-                            </button>
-                            <button className="text-slate-400 hover:text-rose-500 p-2">
-                                <X size={16} />
-                            </button>
-                        </div>
+                    <div className="overflow-x-auto">
+                       <table className="w-full text-left">
+                          <thead className="bg-slate-50 dark:bg-slate-700/50 text-xs uppercase text-slate-500 dark:text-slate-400 font-bold">
+                             <tr>
+                                <th className="px-6 py-4">Topic</th>
+                                <th className="px-6 py-4">Class</th>
+                                <th className="px-6 py-4">Due Date</th>
+                                <th className="px-6 py-4">Submissions</th>
+                                <th className="px-6 py-4 text-right">Actions</th>
+                             </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                             {(activeTab === 'overview' ? assignments.slice(0, 5) : assignments).map(assign => (
+                                <tr key={assign.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                   <td className="px-6 py-4">
+                                      <div className="flex items-center gap-3">
+                                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs
+                                            ${assign.difficulty === 'Easy' ? 'bg-emerald-500' : assign.difficulty === 'Medium' ? 'bg-amber-500' : 'bg-rose-500'}
+                                         `}>
+                                            {assign.difficulty[0]}
+                                         </div>
+                                         <div>
+                                            <div className="font-bold text-slate-800 dark:text-white text-sm">{assign.topic}</div>
+                                            {assign.attachmentUrl && <div className="text-[10px] text-indigo-500 flex items-center gap-1 mt-0.5"><FileText size={10} /> PDF Attached</div>}
+                                         </div>
+                                      </div>
+                                   </td>
+                                   <td className="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-300">
+                                      {assign.className}
+                                   </td>
+                                   <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
+                                      {new Date(assign.dueDate).toLocaleDateString()}
+                                   </td>
+                                   <td className="px-6 py-4">
+                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                                         {assign.submissions.length} Students
+                                      </span>
+                                   </td>
+                                   <td className="px-6 py-4 text-right">
+                                      <button 
+                                         onClick={() => handleViewSubmissions(assign)}
+                                         className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 text-sm font-bold flex items-center justify-end gap-1 ml-auto"
+                                      >
+                                         <Eye size={16} /> Review
+                                      </button>
+                                   </td>
+                                </tr>
+                             ))}
+                          </tbody>
+                       </table>
                     </div>
-                    ))
                 )}
-                </div>
             </div>
-        </>
-      )}
+         )}
 
-      {activeTab === 'classrooms' && (
-          <>
-             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-white">My Classrooms</h2>
-                <button 
-                    onClick={() => setShowCreateClassModal(true)}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 flex items-center gap-2 shadow-md transition-all"
-                >
-                    <Plus size={16} /> Create Classroom
-                </button>
-             </div>
-
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {classrooms.map(room => (
-                    <div key={room.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-all">
-                        <div className={`h-24 bg-gradient-to-r p-6 flex items-end
-                            ${room.theme === 'indigo' ? 'from-indigo-500 to-indigo-600' : 
-                              room.theme === 'emerald' ? 'from-emerald-500 to-emerald-600' :
-                              room.theme === 'rose' ? 'from-rose-500 to-rose-600' :
-                              room.theme === 'amber' ? 'from-amber-500 to-amber-600' :
-                              'from-sky-500 to-sky-600'
-                            }
-                        `}>
-                            <h3 className="text-2xl font-bold text-white">{room.name}</h3>
-                        </div>
-                        <div className="p-6 flex-1">
-                            <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 min-h-[40px]">{room.description || "No description provided."}</p>
-                            
-                            <div className="flex justify-between items-end">
-                                <div>
-                                    <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Class Code</span>
-                                    <button 
-                                        onClick={() => copyToClipboard(room.code)}
-                                        className="flex items-center gap-2 text-2xl font-mono font-bold text-slate-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                                    >
-                                        {room.code} 
-                                        {copiedCode === room.code ? <Check size={20} className="text-emerald-500" /> : <Copy size={20} className="text-slate-300 dark:text-slate-600" />}
-                                    </button>
-                                </div>
-                                <div className="text-right">
-                                    <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 font-medium">
-                                        <Users size={16} /> {room.studentIds.length} Students
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-slate-50 dark:bg-slate-700/30 p-3 border-t border-slate-100 dark:border-slate-700 flex gap-2 justify-end">
-                            <button 
-                                onClick={() => handleViewStudents(room)}
-                                className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-1 flex items-center gap-1"
-                            >
-                                <Users size={14} /> View Students
-                            </button>
-                            <button className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-1">Settings</button>
-                        </div>
-                    </div>
-                ))}
-                
-                {classrooms.length === 0 && (
-                     <div className="md:col-span-2 text-center py-16 bg-slate-50 dark:bg-slate-800/50 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl">
-                         <div className="w-16 h-16 bg-white dark:bg-slate-700 rounded-full shadow-sm flex items-center justify-center mx-auto mb-4 text-slate-300 dark:text-slate-500">
-                             <School size={32} />
-                         </div>
-                         <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 mb-1">No Classrooms Yet</h3>
-                         <p className="text-slate-500 dark:text-slate-400 mb-6">Create a classroom to generate a code for your students.</p>
-                         <button 
+         {/* Content: Classrooms Grid */}
+         {(activeTab === 'overview' || activeTab === 'classrooms') && (
+             <div className="space-y-4">
+                {activeTab === 'classrooms' && (
+                     <div className="flex justify-between items-center">
+                        <h3 className="text-xl font-bold text-slate-800 dark:text-white">Your Classrooms</h3>
+                        <button 
                             onClick={() => setShowCreateClassModal(true)}
-                            className="px-6 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors shadow-sm"
+                            className="text-indigo-600 dark:text-indigo-400 font-bold text-sm hover:underline flex items-center gap-1"
                         >
-                            Create First Class
+                            <Plus size={16} /> Add New
                         </button>
                      </div>
                 )}
+                
+                {activeTab === 'overview' && (
+                    <h3 className="font-bold text-slate-800 dark:text-white text-lg flex items-center gap-2 mt-8">
+                       <School className="text-indigo-500" size={20} /> Active Classrooms
+                    </h3>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {classrooms.map(room => (
+                        <div key={room.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col group hover:shadow-lg transition-all duration-300">
+                            {/* Card Header */}
+                            <div className={`h-28 bg-gradient-to-br p-6 flex flex-col justify-end
+                                ${room.theme === 'indigo' ? 'from-indigo-500 to-violet-600' : 
+                                  room.theme === 'emerald' ? 'from-emerald-500 to-teal-600' :
+                                  room.theme === 'rose' ? 'from-rose-500 to-pink-600' :
+                                  room.theme === 'amber' ? 'from-amber-500 to-orange-600' :
+                                  'from-sky-500 to-blue-600'
+                                }
+                            `}>
+                                <h3 className="text-xl font-bold text-white tracking-tight">{room.name}</h3>
+                                <p className="text-white/80 text-xs font-medium">{room.studentIds.length} Students Enrolled</p>
+                            </div>
+
+                            {/* Card Body */}
+                            <div className="p-6 flex-1 flex flex-col">
+                                <div className="flex justify-between items-center mb-4 bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] uppercase font-bold text-slate-400">Class Code</span>
+                                        <span className="font-mono text-lg font-bold text-slate-800 dark:text-white tracking-widest">{room.code}</span>
+                                    </div>
+                                    <button 
+                                        onClick={() => copyToClipboard(room.code)}
+                                        className="p-2 hover:bg-white dark:hover:bg-slate-600 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors"
+                                        title="Copy Code"
+                                    >
+                                        {copiedCode === room.code ? <Check size={18} className="text-emerald-500" /> : <Copy size={18} />}
+                                    </button>
+                                </div>
+                                
+                                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 line-clamp-2 min-h-[40px]">
+                                    {room.description || "No description provided."}
+                                </p>
+
+                                <div className="mt-auto grid grid-cols-2 gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                    <button 
+                                        onClick={() => handleViewStudents(room)}
+                                        className="py-2 px-3 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <Users size={14} /> Students
+                                    </button>
+                                    <button className="py-2 px-3 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                        <Settings size={14} /> Settings
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    
+                    {/* Add New Classroom Card */}
+                    <button 
+                        onClick={() => setShowCreateClassModal(true)}
+                        className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center p-8 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors group min-h-[300px]"
+                    >
+                        <div className="w-16 h-16 bg-white dark:bg-slate-700 rounded-full shadow-sm flex items-center justify-center mb-4 text-slate-300 dark:text-slate-500 group-hover:scale-110 transition-transform">
+                             <Plus size={32} />
+                        </div>
+                        <h3 className="font-bold text-slate-600 dark:text-slate-300">Create New Class</h3>
+                    </button>
+                </div>
              </div>
-          </>
-      )}
+         )}
+      </div>
 
       {/* --- MODALS --- */}
 
